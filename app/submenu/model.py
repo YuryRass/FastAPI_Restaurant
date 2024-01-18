@@ -13,5 +13,6 @@ class Submenu(Base):
     description: Mapped[str | None]
 
     dish_id: Mapped[int] = mapped_column(ForeignKey("dish.id"))
+    menu_id: Mapped[int] = mapped_column(ForeignKey("menu.id"))
     dishes: Mapped[list["Dish"]] = relationship(back_populates="submenu")
     menu: Mapped["Menu"] = relationship(back_populates="submenus")
