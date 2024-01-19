@@ -1,5 +1,6 @@
+import uuid
 from typing import TYPE_CHECKING
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 
@@ -12,7 +13,21 @@ class Submenu(Base):
     title: Mapped[str] = mapped_column(unique=True)
     description: Mapped[str | None]
 
-    dish_id: Mapped[int] = mapped_column(ForeignKey("dish.id"))
-    menu_id: Mapped[int] = mapped_column(ForeignKey("menu.id"))
-    dishes: Mapped[list["Dish"]] = relationship(back_populates="submenu")
-    menu: Mapped["Menu"] = relationship(back_populates="submenus")
+    dish_id: Mapped[uuid.UUID] = mapped_column(
+        UUID,
+        ForeignKey("dish.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    menu_id: Mapped[uuid.UUID] = mapped_column(
+        UUID,
+        ForeignKey("menu.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    dishes: Mapped[list["Dish"]] = relationship(
+        back_populates="submenu",
+        cascade="all, delete-orphan",
+    )
+    menu: Mapped["Menu"] = relationship(
+        back_populates="submenus",
+        cascade="all, delete-orphan",
+    )

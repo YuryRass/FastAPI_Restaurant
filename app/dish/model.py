@@ -10,5 +10,8 @@ class Dish(Base):
     title: Mapped[str] = mapped_column(unique=True)
     description: Mapped[str | None]
     price: Mapped[float]
-    
-    submenu: Mapped["Submenu"] = relationship(back_populates="dishes")
+
+    submenu: Mapped["Submenu"] = relationship(
+        back_populates="dishes",
+        cascade="all, delete-orphan",
+    )

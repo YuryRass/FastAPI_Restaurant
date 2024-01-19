@@ -1,5 +1,6 @@
+import uuid
 from typing import TYPE_CHECKING
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 
@@ -10,6 +11,13 @@ if TYPE_CHECKING:
 class Menu(Base):
     title: Mapped[str] = mapped_column(unique=True)
     description: Mapped[str | None]
-    submenu_id: Mapped[int] = mapped_column(ForeignKey("submenu.id"))
-    
-    submenus: Mapped[list["Submenu"]] = relationship(back_populates="menu")
+    submenu_id: Mapped[uuid.UUID] = mapped_column(
+        UUID,
+        ForeignKey("submenu.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+
+    submenus: Mapped[list["Submenu"]] = relationship(
+        back_populates="menu",
+        cascade="all, delete-orphan",
+    )
