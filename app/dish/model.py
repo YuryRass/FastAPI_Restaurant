@@ -1,4 +1,6 @@
 from typing import TYPE_CHECKING
+import uuid
+from sqlalchemy import UUID, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 
@@ -11,7 +13,8 @@ class Dish(Base):
     description: Mapped[str | None]
     price: Mapped[float]
 
-    # submenu: Mapped["Submenu"] = relationship(
-    #     back_populates="dishes",
-    #     cascade="all, delete-orphan",
-    # )
+    submenu_id: Mapped[uuid.UUID] = mapped_column(
+        UUID,
+        ForeignKey("submenu.id", ondelete="CASCADE"),
+    )
+

@@ -18,18 +18,18 @@ class MenuDAO(BaseDAO):
                 Menu.id,
                 Menu.title,
                 Menu.description,
-                func.count(distinct(Menu.submenu_id))
-                .filter(Submenu.id.is_not(None))
+                func.count(distinct(Dish.submenu_id))
+                .filter(Dish.submenu_id.is_not(None))
                 .label("submenus_count"),
-                func.count(Submenu.dish_id)
-                .filter(Dish.id.is_not(None))
+                func.count(Dish.submenu_id)
+                .filter(Dish.submenu_id.is_not(None))
                 .label("dishes_count"),
             )
             .select_from(Menu)
             .filter_by(**kwargs)
-            .join(Submenu, Menu.id == Submenu.id, isouter=True)
-            .join(Dish, Submenu.id == Dish.id, isouter=True)
-            .group_by(Menu.id, Menu.submenu_id, Submenu.dish_id)
+            .join(Submenu, Menu.id == Submenu.menu_id, isouter=True)
+            .join(Dish, Submenu.id == Dish.submenu_id, isouter=True)
+            .group_by(Menu, Dish.submenu_id)
         )
 
         session: AsyncSession
