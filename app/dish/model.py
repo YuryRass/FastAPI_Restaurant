@@ -11,7 +11,7 @@ class Dish(Base):
     description: Mapped[str | None]
     price: Mapped[float]
 
-    submenu: Mapped["Submenu"] = relationship(
-        back_populates="dishes",
-        cascade="all, delete-orphan",
-    )
+    # submenu: Mapped["Submenu"] = relationship(
+    #     back_populates="dishes",
+    #     cascade="all, delete-orphan",
+    # )

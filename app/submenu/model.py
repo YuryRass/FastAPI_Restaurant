@@ -16,18 +16,16 @@ class Submenu(Base):
     dish_id: Mapped[uuid.UUID] = mapped_column(
         UUID,
         ForeignKey("dish.id", ondelete="CASCADE"),
-        nullable=False,
     )
     menu_id: Mapped[uuid.UUID] = mapped_column(
         UUID,
         ForeignKey("menu.id", ondelete="CASCADE"),
-        nullable=False,
     )
-    dishes: Mapped[list["Dish"]] = relationship(
-        back_populates="submenu",
-        cascade="all, delete-orphan",
-    )
-    menu: Mapped["Menu"] = relationship(
-        back_populates="submenus",
-        cascade="all, delete-orphan",
-    )
+    # dishes: Mapped[list["Dish"]] = relationship(
+    #     back_populates="submenu",
+    #     cascade="all, delete-orphan",
+    # )
+    # menu: Mapped["Menu"] = relationship(
+    #     back_populates="submenus",
+    #     cascade="all, delete-orphan",
+    # )
