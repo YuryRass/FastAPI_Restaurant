@@ -48,11 +48,11 @@ class BaseDAO:
             return result.mappings().one()
 
     @classmethod
-    async def delete_records(cls, **kwargs):
+    async def delete_record(cls, **kwargs):
         stmt = delete(cls.model).filter_by(**kwargs).returning(cls.model.id)
 
         session: AsyncSession
         async with async_session() as session:
             result = await session.execute(stmt)
             await session.commit()
-            return result.mappings().all()
+            return result.mappings().one_or_none()

@@ -16,9 +16,9 @@ from sqlalchemy.orm import (
 from app.config import settings
 
 
-engine: AsyncEngine = create_async_engine(settings.DATABASE_URL)
+async_engine: AsyncEngine = create_async_engine(settings.DATABASE_URL)
 
-async_session: AsyncSession = async_sessionmaker(engine, expire_on_commit=False)
+async_session: AsyncSession = async_sessionmaker(async_engine, expire_on_commit=False)
 
 
 class Base(DeclarativeBase):

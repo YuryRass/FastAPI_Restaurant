@@ -1,3 +1,4 @@
+import uuid
 from sqlalchemy import distinct, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.dao.base import BaseDAO
@@ -11,7 +12,7 @@ class MenuDAO(BaseDAO):
     model = Menu
 
     @classmethod
-    async def show(cls, **kwargs):
+    async def show_menu(cls, **kwargs):
         stmt = (
             select(
                 Menu.id,
@@ -36,5 +37,11 @@ class MenuDAO(BaseDAO):
             result = await session.execute(stmt)
             await session.commit()
             if kwargs:
-                return result.mappings().one()
+                return result.mappings().one_or_none()
             return result.mappings().all()
+
+    @classmethod
+    async def update_menu(cls, menu_id: uuid.UUID, **data):
+        updated_menu: Menu = super().update(menu_id, **data)
+        menu_res = await cls.show(id=updated_menu.id)
+        return menu_res
