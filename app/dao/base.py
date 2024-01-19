@@ -26,7 +26,7 @@ class BaseDAO:
 
     @classmethod
     async def add(cls, **data):
-        stmt = insert(cls.model).values(**data).returning(cls.model.__table__.columns)
+        stmt = insert(cls.model).values(**data).returning(cls.model.id)
         session: AsyncSession
         async with async_session() as session:
             result = await session.execute(stmt)
