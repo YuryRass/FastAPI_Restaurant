@@ -1,14 +1,40 @@
-from dao.base import BaseDAO
+from sqlalchemy import distinct, func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.dao.base import BaseDAO
+from app.database import async_session
+from app.dish.model import Dish
 from app.menu.model import Menu
-
-# {
-#     "id": "9a5bce5f-4462-4d12-a66c-d59584b19ee8",
-#     "title": "My menu 1",
-#     "description": "My menu description 1",
-#     "submenus_count": 0,
-#     "dishes_count": 0
-# }
+from app.submenu.model import Submenu
 
 
-class SubmenuDAO(BaseDAO):
+class MenuDAO(BaseDAO):
     model = Menu
+
+    @classmethod
+    async def show(cls, **kwargs):
+        stmt = (
+            select(
+                Menu.id,
+                Menu.title,
+                Menu.description,
+                func.count(distinct(Menu.submenu_id))
+                .filter(Submenu.id.is_not(None))
+                .label("submenus_count"),
+                func.count(Submenu.dish_id)
+                .filter(Dish.id.is_not(None))
+                .label("dishes_count"),
+            )
+            .select_from(Menu)
+            .filter_by(**kwargs)
+            .join(Submenu, Menu.id == Submenu.id, isouter=True)
+            .join(Dish, Submenu.id == Dish.id, isouter=True)
+            .group_by(Menu.id, Menu.submenu_id, Submenu.dish_id)
+        )
+
+        session: AsyncSession
+        async with async_session() as session:
+            result = await session.execute(stmt)
+            await session.commit()
+            if kwargs:
+                return result.mappings().one()
+            return result.mappings().all()
