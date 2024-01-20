@@ -11,7 +11,4 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 COPY . .
 
-RUN mv .env-example .env && \
-    mv .env.psql-example .env.psql
-
 CMD ["uvicorn", "app.main:app", "--host=0.0.0.0"]

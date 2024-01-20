@@ -9,11 +9,12 @@
 
 `cd FastAPI_Restaurant`
 
+В корне проекта переименуйте конфигурационные файлы `.env.psql-example` и `.env-example` на `.env.psql` и `.env`
+
 Для запуска проекта введите команду:
+
 `docker-compose up --build`
 
 Для запуска проекта фоновом режиме необходимо добавить флаг `-d`:
 
 `docker-compose up --build -d`
-
-
