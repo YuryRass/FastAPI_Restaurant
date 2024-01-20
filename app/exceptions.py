@@ -13,3 +13,7 @@ class RestaurantException(HTTPException):
 class MenuNotFoundException(RestaurantException):
     status_code = status.HTTP_404_NOT_FOUND
     detail = "menu not found"
+
+class SubMenuNotFoundException(RestaurantException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = "submenu not found"
