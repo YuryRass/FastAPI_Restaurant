@@ -12,7 +12,7 @@ class MenuDAO(BaseDAO):
     model = Menu
 
     @classmethod
-    async def show_menu(cls, **kwargs):
+    async def show(cls, **kwargs):
         stmt = (
             select(
                 Menu.id,
@@ -43,5 +43,5 @@ class MenuDAO(BaseDAO):
     @classmethod
     async def update_menu(cls, menu_id: uuid.UUID, **data):
         updated_menu: Menu = super().update(menu_id, **data)
-        menu_res = await cls.show_menu(id=updated_menu.id)
+        menu_res = await cls.show(id=updated_menu.id)
         return menu_res

@@ -11,7 +11,7 @@ class SubmenuDAO(BaseDAO):
     model = Submenu
 
     @classmethod
-    async def show_submenu(cls, **kwargs):
+    async def show(cls, **kwargs):
         stmt = (
             select(
                 Submenu.id,
@@ -39,5 +39,5 @@ class SubmenuDAO(BaseDAO):
     @classmethod
     async def update_submenu(cls, submenu_id: uuid.UUID, **data):
         updated_submenu: Submenu = super().update(submenu_id, **data)
-        submenu_res = await cls.show_submenu(id=updated_submenu.id)
+        submenu_res = await cls.show(id=updated_submenu.id)
         return submenu_res

@@ -13,20 +13,20 @@ router: APIRouter = APIRouter(prefix="/menus")
 async def add_menu(menu: SMenu, responce: Response):
     menu: RowMapping = await MenuDAO.add(title=menu.title, description=menu.description)
     responce.status_code = status.HTTP_201_CREATED
-    added_menu: RowMapping = await MenuDAO.show_menu(id=menu["id"])
+    added_menu: RowMapping = await MenuDAO.show(id=menu["id"])
     return added_menu
 
 
 @router.get("")
 async def show_menus():
-    menus = await MenuDAO.show_menu()
+    menus = await MenuDAO.show()
 
     return menus
 
 
 @router.get("/{menu_id}")
 async def show_menu_by_id(menu_id: uuid.UUID):
-    menu: RowMapping | None = await MenuDAO.show_menu(id=menu_id)
+    menu: RowMapping | None = await MenuDAO.show(id=menu_id)
     if not menu:
         raise MenuNotFoundException
 
@@ -35,7 +35,7 @@ async def show_menu_by_id(menu_id: uuid.UUID):
 
 @router.patch("/{menu_id}")
 async def update_menu(menu_id: uuid.UUID, new_data: SMenu):
-    menu: RowMapping | None = await MenuDAO.show_menu(id=menu_id)
+    menu: RowMapping | None = await MenuDAO.show(id=menu_id)
     if not menu:
         raise MenuNotFoundException
 
@@ -45,7 +45,7 @@ async def update_menu(menu_id: uuid.UUID, new_data: SMenu):
         description=new_data.description,
     )
 
-    menu_res = await MenuDAO.show_menu(id=updated_menu["id"])
+    menu_res = await MenuDAO.show(id=updated_menu["id"])
 
     return menu_res
 
