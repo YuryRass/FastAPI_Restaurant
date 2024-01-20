@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from app.db_creator import create_tables
 
 from app.menu.router import router as menu_router
+from app.submenu.router import router as submenu_router
 
 
 @asynccontextmanager
@@ -18,5 +19,5 @@ app: FastAPI = FastAPI(
     root_path="/api/v1",
 )
 
-
+app.include_router(submenu_router)
 app.include_router(menu_router)
