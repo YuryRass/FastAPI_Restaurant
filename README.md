@@ -11,6 +11,10 @@
 
 В корне проекта переименуйте конфигурационные файлы `.env.psql-example` и `.env-example` на `.env.psql` и `.env`
 
+На операционной системе Linux переименовать файлы можно следующей командой:
+
+`mv .env.psql-example .env.psql && mv .env-example .env`
+
 Для запуска проекта введите команду:
 
 `docker-compose up --build`
