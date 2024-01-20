@@ -29,7 +29,7 @@ class MenuDAO(BaseDAO):
             .filter_by(**kwargs)
             .join(Submenu, Menu.id == Submenu.menu_id, isouter=True)
             .join(Dish, Submenu.id == Dish.submenu_id, isouter=True)
-            .group_by(Menu, Dish.submenu_id)
+            .group_by(Menu.id, Dish.submenu_id)
         )
 
         session: AsyncSession
@@ -43,5 +43,5 @@ class MenuDAO(BaseDAO):
     @classmethod
     async def update_menu(cls, menu_id: uuid.UUID, **data):
         updated_menu: Menu = super().update(menu_id, **data)
-        menu_res = await cls.show(id=updated_menu.id)
+        menu_res = await cls.show_menu(id=updated_menu.id)
         return menu_res

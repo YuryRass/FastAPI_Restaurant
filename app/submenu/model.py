@@ -1,12 +1,8 @@
 import uuid
-from typing import TYPE_CHECKING
 from sqlalchemy import ForeignKey, UUID
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 from app.database import Base
 
-if TYPE_CHECKING:
-    from app.dish.model import Dish
-    from app.menu.model import Menu
 
 
 class Submenu(Base):
@@ -17,4 +13,3 @@ class Submenu(Base):
         UUID,
         ForeignKey("menu.id", ondelete="CASCADE"),
     )
-
