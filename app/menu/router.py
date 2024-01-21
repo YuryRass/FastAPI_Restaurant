@@ -1,7 +1,6 @@
 import uuid
 
 from fastapi import APIRouter, Response, status
-from sqlalchemy import RowMapping
 
 from app.exceptions import MenuNotFoundException
 from app.menu.dao import MenuDAO
@@ -12,9 +11,9 @@ router: APIRouter = APIRouter(prefix="/menus")
 
 @router.post("")
 async def add_menu(menu: SMenu, responce: Response):
-    menu: RowMapping = await MenuDAO.add(title=menu.title, description=menu.description)
+    menu_res = await MenuDAO.add(title=menu.title, description=menu.description)
     responce.status_code = status.HTTP_201_CREATED
-    added_menu: RowMapping = await MenuDAO.show(id=menu["id"])
+    added_menu = await MenuDAO.show(id=menu_res["id"])
     return added_menu
 
 
@@ -27,7 +26,7 @@ async def show_menus():
 
 @router.get("/{menu_id}")
 async def show_menu_by_id(menu_id: uuid.UUID):
-    menu: RowMapping | None = await MenuDAO.show(id=menu_id)
+    menu = await MenuDAO.show(id=menu_id)
     if not menu:
         raise MenuNotFoundException
 
@@ -36,11 +35,11 @@ async def show_menu_by_id(menu_id: uuid.UUID):
 
 @router.patch("/{menu_id}")
 async def update_menu(menu_id: uuid.UUID, new_data: SMenu):
-    menu: RowMapping | None = await MenuDAO.show(id=menu_id)
+    menu = await MenuDAO.show(id=menu_id)
     if not menu:
         raise MenuNotFoundException
 
-    updated_menu: RowMapping = await MenuDAO.update(
+    updated_menu = await MenuDAO.update(
         menu_id,
         title=new_data.title,
         description=new_data.description,

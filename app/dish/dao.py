@@ -36,8 +36,3 @@ class DishDAO(BaseDAO):
             else:
                 return result.mappings().one_or_none()
 
-    @classmethod
-    async def update_dish(cls, dish_id: uuid.UUID, **data):
-        updated_dish: Dish = super().update(dish_id, **data)
-        dish_res = await cls.show(id=updated_dish.id)
-        return dish_res

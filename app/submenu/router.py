@@ -1,7 +1,6 @@
 import uuid
 
 from fastapi import APIRouter, Response, status
-from sqlalchemy import RowMapping
 
 from app.exceptions import SubMenuNotFoundException
 from app.submenu.dao import SubmenuDAO
@@ -12,19 +11,19 @@ router: APIRouter = APIRouter(prefix="/menus")
 
 @router.post("/{menu_id}/submenus")
 async def add_submenu(menu_id: uuid.UUID, menu: SSubMenu, responce: Response):
-    submenu: RowMapping = await SubmenuDAO.add(
+    submenu = await SubmenuDAO.add(
         title=menu.title,
         description=menu.description,
         menu_id=menu_id,
     )
     responce.status_code = status.HTTP_201_CREATED
-    added_submenu: RowMapping = await SubmenuDAO.show(id=submenu["id"])
+    added_submenu = await SubmenuDAO.show(id=submenu["id"])
     return added_submenu
 
 
 @router.get("/{menu_id}/submenus/{submenu_id}")
 async def show_submenu_by_id(menu_id: uuid.UUID, submenu_id: uuid.UUID):
-    submenu: RowMapping | None = await SubmenuDAO.show(
+    submenu = await SubmenuDAO.show(
         id=submenu_id,
         menu_id=menu_id,
     )
@@ -47,14 +46,14 @@ async def update_submenu(
     submenu_id: uuid.UUID,
     new_data: SSubMenu,
 ):
-    submenu: RowMapping | None = await SubmenuDAO.show(
+    submenu = await SubmenuDAO.show(
         id=submenu_id,
         menu_id=menu_id,
     )
     if not submenu:
         raise SubMenuNotFoundException
 
-    updated_menu: RowMapping = await SubmenuDAO.update(
+    updated_menu = await SubmenuDAO.update(
         submenu_id,
         title=new_data.title,
         description=new_data.description,

@@ -26,7 +26,7 @@ class SubmenuDAO(BaseDAO):
             .select_from(Submenu)
             .filter_by(**kwargs)
             .join(Dish, Submenu.id == Dish.submenu_id, isouter=True)
-            .group_by(Submenu, Dish.submenu_id)
+            .group_by(Submenu.id, Dish.submenu_id)
         )
 
         session: AsyncSession
@@ -38,8 +38,3 @@ class SubmenuDAO(BaseDAO):
                 return submenu_res[0]
             return submenu_res
 
-    @classmethod
-    async def update_submenu(cls, submenu_id: uuid.UUID, **data):
-        updated_submenu: Submenu = super().update(submenu_id, **data)
-        submenu_res = await cls.show(id=updated_submenu.id)
-        return submenu_res

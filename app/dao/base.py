@@ -1,5 +1,7 @@
 """Основной DAO (Data Access Object)"""
-from sqlalchemy import delete, insert, select, update
+import uuid
+
+from sqlalchemy import delete, insert, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import async_session
@@ -7,22 +9,6 @@ from app.database import async_session
 
 class BaseDAO:
     model = None
-
-    @classmethod
-    async def find_all(cls, model_id: int):
-        query = select(cls.model.__table__.columns)
-        session: AsyncSession
-        async with async_session() as session:
-            result = await session.execute(query)
-            return result.mappings().all()
-
-    @classmethod
-    async def find_by_id(cls, model_id: int):
-        query = select(cls.model.__table__.columns).filter_by(id=model_id)
-        session: AsyncSession
-        async with async_session() as session:
-            result = await session.execute(query)
-            return result.mappings().one_or_none()
 
     @classmethod
     async def add(cls, **data):
@@ -34,7 +20,7 @@ class BaseDAO:
             return result.mappings().one()
 
     @classmethod
-    async def update(cls, model_id: int, **data):
+    async def update(cls, model_id: uuid.UUID, **data):
         stmt = (
             update(cls.model)
             .where(cls.model.id == model_id)

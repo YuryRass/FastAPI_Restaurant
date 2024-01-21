@@ -1,7 +1,6 @@
 import uuid
 
 from fastapi import APIRouter, Response, status
-from sqlalchemy import RowMapping
 
 from app.dish.dao import DishDAO
 from app.dish.shemas import OutSDish, SDish
@@ -20,14 +19,14 @@ async def add_submenu(
 ):
     finded_submenu = await SubmenuDAO.show(id=submenu_id, menu_id=menu_id)
     if finded_submenu:
-        dish: RowMapping = await DishDAO.add(
+        dish = await DishDAO.add(
             title=dish.title,
             description=dish.description,
             price=dish.price,
             submenu_id=submenu_id,
         )
         responce.status_code = status.HTTP_201_CREATED
-        added_dish: RowMapping = await DishDAO.show(menu_id, submenu_id, id=dish["id"])
+        added_dish = await DishDAO.show(menu_id, submenu_id, id=dish["id"])
         return OutSDish(**dict(added_dish))
 
 
@@ -37,7 +36,7 @@ async def show_dish_by_id(
     submenu_id: uuid.UUID,
     dish_id: uuid.UUID,
 ):
-    dish: RowMapping | None = await DishDAO.show(menu_id, submenu_id, id=dish_id)
+    dish = await DishDAO.show(menu_id, submenu_id, id=dish_id)
 
     if not dish:
         raise DishNotFoundException
@@ -47,7 +46,7 @@ async def show_dish_by_id(
 
 @router.get("/{menu_id}/submenus/{submenu_id}/dishes")
 async def show_dishes(menu_id: uuid.UUID, submenu_id: uuid.UUID):
-    dishes: RowMapping | None = await DishDAO.show(menu_id, submenu_id)
+    dishes = await DishDAO.show(menu_id, submenu_id)
 
     return dishes
 
@@ -59,11 +58,11 @@ async def update_dish(
     dish_id: uuid.UUID,
     new_data: SDish,
 ):
-    dish: RowMapping | None = await DishDAO.show(menu_id, submenu_id, id=dish_id)
+    dish = await DishDAO.show(menu_id, submenu_id, id=dish_id)
     if not dish:
         raise DishNotFoundException
 
-    updated_dish: RowMapping = await DishDAO.update(
+    updated_dish = await DishDAO.update(
         dish_id,
         title=new_data.title,
         description=new_data.description,

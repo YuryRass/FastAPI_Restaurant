@@ -42,8 +42,3 @@ class MenuDAO(BaseDAO):
                 return result.mappings().one_or_none()
             return result.mappings().all()
 
-    @classmethod
-    async def update_menu(cls, menu_id: uuid.UUID, **data):
-        updated_menu: Menu = super().update(menu_id, **data)
-        menu_res = await cls.show(id=updated_menu.id)
-        return menu_res
