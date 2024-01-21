@@ -5,7 +5,6 @@ from sqlalchemy import RowMapping
 
 from app.exceptions import MenuNotFoundException
 from app.menu.dao import MenuDAO
-from app.menu.model import Menu
 from app.menu.shemas import SMenu
 
 router: APIRouter = APIRouter(prefix="/menus")
