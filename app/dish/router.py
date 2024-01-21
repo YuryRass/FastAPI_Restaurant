@@ -11,7 +11,7 @@ router: APIRouter = APIRouter(prefix="/menus")
 
 
 @router.post("/{menu_id}/submenus/{submenu_id}/dishes")
-async def add_submenu(
+async def add_dish(
     menu_id: uuid.UUID,
     submenu_id: uuid.UUID,
     dish: SDish,
