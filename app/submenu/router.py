@@ -1,10 +1,11 @@
 import uuid
+
 from fastapi import APIRouter, Response, status
 from sqlalchemy import RowMapping
-from app.exceptions import SubMenuNotFoundException
-from app.submenu.shemas import SSubMenu
 
+from app.exceptions import SubMenuNotFoundException
 from app.submenu.dao import SubmenuDAO
+from app.submenu.shemas import SSubMenu
 
 router: APIRouter = APIRouter(prefix="/menus")
 

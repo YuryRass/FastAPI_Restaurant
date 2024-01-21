@@ -1,8 +1,9 @@
 import asyncio
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
-from app.db_creator import create_tables
 
+from fastapi import FastAPI
+
+from app.db_creator import create_tables
 from app.dish.router import router as dish_router
 from app.menu.router import router as menu_router
 from app.submenu.router import router as submenu_router

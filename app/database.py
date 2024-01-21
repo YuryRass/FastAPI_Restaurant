@@ -1,20 +1,15 @@
 import uuid
+
 from sqlalchemy import UUID
 from sqlalchemy.ext.asyncio import (
-    AsyncSession,
     AsyncEngine,
-    create_async_engine,
+    AsyncSession,
     async_sessionmaker,
+    create_async_engine,
 )
-from sqlalchemy.orm import (
-    DeclarativeBase,
-    Mapped,
-    declared_attr,
-    mapped_column,
-)
+from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
 
 from app.config import settings
-
 
 async_engine: AsyncEngine = create_async_engine(settings.DATABASE_URL)
 

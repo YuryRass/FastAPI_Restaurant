@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator, UUID4
+from pydantic import UUID4, BaseModel, field_validator
 
 
 class SDish(BaseModel):
