@@ -1,6 +1,4 @@
-import uuid
-
-from sqlalchemy import distinct, func, select, text
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dao.base import BaseDAO
@@ -15,6 +13,7 @@ class MenuDAO(BaseDAO):
 
     @classmethod
     async def show(cls, **kwargs):
+        # вывод таблицы menu и подсчет кол-ва подменю
         stmt1 = (
             select(
                 Menu.id,
@@ -30,6 +29,7 @@ class MenuDAO(BaseDAO):
             .group_by(Menu.id, Submenu.menu_id)
         )
 
+        # подсчет кол-ва блюд для меню
         stmt2 = (
             select(
                 func.count(Dish.submenu_id)
@@ -45,17 +45,15 @@ class MenuDAO(BaseDAO):
 
         session: AsyncSession
         async with async_session() as session:
-            result1 = await session.execute(stmt1)
-            result2 = await session.execute(stmt2)
-            res1 = result1.mappings().all()
-            res2 = result2.mappings().all()
-            res = []
-            for r1, r2 in zip(res1, res2):
-                res.append(dict(**r1, **r2))
-            await session.commit()
-            if kwargs:
-                if res:
+            res = await cls.__unioned_result(session, stmt1, stmt2)
+            if kwargs and res:
                     return res[0]
-                else:
-                    return []
             return res
+
+    @classmethod
+    async def __unioned_result(cls, session: AsyncSession, stmt1, stmt2):
+        result1 = await session.execute(stmt1)
+        result2 = await session.execute(stmt2)
+        res1 = result1.mappings().all()
+        res2 = result2.mappings().all()
+        return [dict(**r1, **r2) for r1, r2 in zip(res1, res2)]
