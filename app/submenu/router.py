@@ -6,7 +6,10 @@ from app.exceptions import SubMenuNotFoundException
 from app.submenu.dao import SubmenuDAO
 from app.submenu.shemas import SSubMenu
 
-router: APIRouter = APIRouter(prefix="/menus")
+router: APIRouter = APIRouter(
+    prefix="/menus",
+    tags=["Submenus"],
+)
 
 
 @router.post("/{menu_id}/submenus")

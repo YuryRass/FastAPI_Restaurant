@@ -6,7 +6,10 @@ from app.exceptions import MenuNotFoundException
 from app.menu.dao import MenuDAO
 from app.menu.shemas import SMenu
 
-router: APIRouter = APIRouter(prefix="/menus")
+router: APIRouter = APIRouter(
+    prefix="/menus",
+    tags=["Menus"],
+)
 
 
 @router.post("")

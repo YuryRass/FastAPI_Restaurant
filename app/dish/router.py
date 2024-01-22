@@ -7,7 +7,10 @@ from app.dish.shemas import OutSDish, SDish
 from app.exceptions import DishNotFoundException
 from app.submenu.dao import SubmenuDAO
 
-router: APIRouter = APIRouter(prefix="/menus")
+router: APIRouter = APIRouter(
+    prefix="/menus",
+    tags=["Dishes"],
+)
 
 
 @router.post("/{menu_id}/submenus/{submenu_id}/dishes")
