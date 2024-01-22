@@ -37,4 +37,3 @@ class SubmenuDAO(BaseDAO):
             if len(submenu_res) == 1:
                 return submenu_res[0]
             return submenu_res
-

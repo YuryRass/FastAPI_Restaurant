@@ -35,4 +35,3 @@ class DishDAO(BaseDAO):
                 return result.mappings().all()
             else:
                 return result.mappings().one_or_none()
-

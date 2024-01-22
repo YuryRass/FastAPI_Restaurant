@@ -42,12 +42,11 @@ class MenuDAO(BaseDAO):
             .group_by(Dish.submenu_id)
         )
 
-
         session: AsyncSession
         async with async_session() as session:
             res = await cls.__unioned_result(session, stmt1, stmt2)
             if kwargs and res:
-                    return res[0]
+                return res[0]
             return res
 
     @classmethod
