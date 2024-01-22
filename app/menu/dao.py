@@ -37,6 +37,7 @@ class MenuDAO(BaseDAO):
                 .label("dishes_count"),
             )
             .select_from(Menu)
+            .filter_by(**kwargs)
             .join(Submenu, Menu.id == Submenu.menu_id, isouter=True)
             .join(Dish, Submenu.id == Dish.submenu_id, isouter=True)
             .group_by(Dish.submenu_id)
