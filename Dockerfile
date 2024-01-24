@@ -11,4 +11,6 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 COPY . .
 
-CMD ["uvicorn", "app.main:app", "--host=0.0.0.0"]
+RUN chmod a+x docker/run.sh
+
+CMD ["docker/run.sh"]
