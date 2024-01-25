@@ -23,3 +23,7 @@ class SubMenuNotFoundException(RestaurantException):
 class DishNotFoundException(RestaurantException):
     status_code = status.HTTP_404_NOT_FOUND
     detail = "dish not found"
+
+class SimilarMenuTitlesException(RestaurantException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    detail = "menu titles must be unique"

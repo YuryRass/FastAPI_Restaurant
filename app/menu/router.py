@@ -1,8 +1,9 @@
 import uuid
+from sqlalchemy.exc import IntegrityError
 
 from fastapi import APIRouter, Response, status
 
-from app.exceptions import MenuNotFoundException
+from app.exceptions import MenuNotFoundException, SimilarMenuTitlesException
 from app.menu.dao import MenuDAO
 from app.menu.shemas import SMenu
 
@@ -14,7 +15,11 @@ router: APIRouter = APIRouter(
 
 @router.post("")
 async def add_menu(menu: SMenu, responce: Response):
-    menu_res = await MenuDAO.add(title=menu.title, description=menu.description)
+    try:
+        menu_res = await MenuDAO.add(title=menu.title, description=menu.description)
+    except IntegrityError:
+        raise SimilarMenuTitlesException
+
     responce.status_code = status.HTTP_201_CREATED
     added_menu = await MenuDAO.show(id=menu_res["id"])
     return added_menu
