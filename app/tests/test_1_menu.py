@@ -1,11 +1,13 @@
 from http import HTTPStatus
 from typing import Any
+import uuid
 
 from httpx import AsyncClient, Response
 
 
-async def test_all_menu_empty(ac: AsyncClient) -> None:
+async def test_menus_is_empty(ac: AsyncClient) -> None:
     """Проверка на пустое меню"""
+
     response: Response = await ac.get(
         url="/menus",
     )
@@ -48,7 +50,7 @@ async def test_add_menu_similar(
     menu_post: dict[str, str],
     ac: AsyncClient,
 ) -> None:
-    """Добавление нового меню с одинаковым названием."""
+    """Проверка на добавление нового меню с одинаковым названием"""
 
     response: Response = await ac.post(
         "/menus",
@@ -61,6 +63,7 @@ async def test_add_menu_similar(
 
 async def test_menus_not_empty(ac: AsyncClient) -> None:
     """Проверка на получение непустого списка меню"""
+
     response: Response = await ac.get(url="/menus")
     assert response.status_code == HTTPStatus.OK, "The response status is not 200"
     assert response.json() != [], "There is an empty list in the response"
@@ -71,6 +74,7 @@ async def test_get_menu_by_id(
     ac: AsyncClient,
 ) -> None:
     """Проверка получения меню по его ID"""
+
     menu = saved_data["menu"]
     response: Response = await ac.get(url=f"/menus/{menu['id']}")
     assert response.status_code == HTTPStatus.OK, "The response status is not 200"
@@ -97,6 +101,7 @@ async def test_update_menu(
     ac: AsyncClient,
 ) -> None:
     """Проверка на изменение данных о меню"""
+
     menu = saved_data["menu"]
     response: Response = await ac.patch(
         url=f"/menus/{menu['id']}",
@@ -122,11 +127,28 @@ async def test_update_menu(
     saved_data["menu"] = response.json()
 
 
-async def test_get_updated_menu(
+async def test_update_non_existent_menu(
+    non_existen_menu_id: uuid.UUID,
+    menu_patch: dict[str, str],
+    ac: AsyncClient,
+) -> None:
+    """Проверка на изменение несуществующего меню"""
+
+    response: Response = await ac.patch(
+        url=f"/menus/{non_existen_menu_id}",
+        json=menu_patch,
+    )
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+
+
+
+async def test_get_updated_menu_by_id(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
     """Проверка получения измененного меню"""
+
     menu = saved_data["menu"]
     response: Response = await ac.get(
         url=f"/menus/{menu['id']}",
@@ -154,6 +176,7 @@ async def test_delete_menu(
     ac: AsyncClient,
 ) -> None:
     """Проверка на удаление меню"""
+
     menu = saved_data["menu"]
     response: Response = await ac.delete(
         url=f"/menus/{menu['id']}",
@@ -169,6 +192,7 @@ async def test_get_deleted_menu(
     ac: AsyncClient,
 ) -> None:
     """Проверка на отсутствие удаленного меню"""
+
     menu = saved_data["menu"]
     response = await ac.get(url=f"/menus/{menu['id']}")
     assert (

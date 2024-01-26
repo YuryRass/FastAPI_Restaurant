@@ -1,8 +1,9 @@
 import uuid
 
 from fastapi import APIRouter, Response, status
+from sqlalchemy.exc import IntegrityError
 
-from app.exceptions import SubMenuNotFoundException
+from app.exceptions import SubMenuNotFoundException, SimilarSubmenuTitlesException
 from app.submenu.dao import SubmenuDAO
 from app.submenu.shemas import SSubMenu
 
@@ -14,11 +15,14 @@ router: APIRouter = APIRouter(
 
 @router.post("/{menu_id}/submenus")
 async def add_submenu(menu_id: uuid.UUID, menu: SSubMenu, responce: Response):
-    submenu = await SubmenuDAO.add(
-        title=menu.title,
-        description=menu.description,
-        menu_id=menu_id,
-    )
+    try:
+        submenu = await SubmenuDAO.add(
+            title=menu.title,
+            description=menu.description,
+            menu_id=menu_id,
+        )
+    except IntegrityError:
+        raise SimilarSubmenuTitlesException
     responce.status_code = status.HTTP_201_CREATED
     added_submenu = await SubmenuDAO.show(id=submenu["id"])
     return added_submenu
