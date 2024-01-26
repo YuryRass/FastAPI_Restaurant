@@ -384,7 +384,7 @@ async def test_delete_menu_finally(
 
     menu = saved_data["menu"]
     response = await ac.delete(url=f"/menus/{menu['id']}")
-    assert response.status_code == HTTPStatus.OK, "Статус ответа не 200"
+    assert response.status_code == HTTPStatus.OK, "The response status is not 200"
     assert (
         response.json()["message"] == "The menu has been deleted"
     ), "The error message does not match the expected response"
