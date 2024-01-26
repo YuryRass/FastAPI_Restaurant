@@ -14,12 +14,13 @@ class MenuDAO(BaseDAO):
     model = Menu
 
     @classmethod
-    async def show(cls, menu_id: uuid.UUID | None = None):
+    async def show(
+        cls,
+        menu_id: uuid.UUID | None = None,
+    ):
         session: AsyncSession
         async with async_session() as session:
             res = await cls.__get_menu_info(session, menu_id)
-            if menu_id and res:
-                return res[0]
 
             return res
 
@@ -48,19 +49,20 @@ class MenuDAO(BaseDAO):
             .as_scalar()
         )
 
-        menus_query = (
-            select(
-                menu_alias.id,
-                menu_alias.title,
-                menu_alias.description,
-                submenus_count_subq.label("submenus_count"),
-                dishes_count_subq.label("dishes_count"),
-            )
-            .group_by(menu_alias.id)
-        )
+        menus_query = select(
+            menu_alias.id,
+            menu_alias.title,
+            menu_alias.description,
+            submenus_count_subq.label("submenus_count"),
+            dishes_count_subq.label("dishes_count"),
+        ).group_by(menu_alias.id)
 
         if menu_id:
             menus_query = menus_query.having(menu_alias.id == menu_id)
 
         menus = await session.execute(menus_query)
-        return menus.mappings().all()
+        res = menus.mappings().all()
+        if menu_id and res:
+            return res[0]
+
+        return res
