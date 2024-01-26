@@ -1,4 +1,6 @@
+import uuid
 from sqlalchemy import func, select
+from sqlalchemy.orm import aliased
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dao.base import BaseDAO
@@ -12,48 +14,53 @@ class MenuDAO(BaseDAO):
     model = Menu
 
     @classmethod
-    async def show(cls, **kwargs):
-        # вывод таблицы menu и подсчет кол-ва подменю
-        stmt1 = (
-            select(
-                Menu.id,
-                Menu.title,
-                Menu.description,
-                func.count(Submenu.menu_id)
-                .filter(Submenu.menu_id.is_not(None))
-                .label("submenus_count"),
-            )
-            .select_from(Menu)
-            .filter_by(**kwargs)
-            .join(Submenu, Menu.id == Submenu.menu_id, isouter=True)
-            .group_by(Menu.id, Submenu.menu_id)
-        )
-
-        # подсчет кол-ва блюд для меню
-        stmt2 = (
-            select(
-                func.count(Dish.submenu_id)
-                .filter(Dish.submenu_id.is_not(None))
-                .label("dishes_count"),
-            )
-            .select_from(Menu)
-            .filter_by(**kwargs)
-            .join(Submenu, Menu.id == Submenu.menu_id, isouter=True)
-            .join(Dish, Submenu.id == Dish.submenu_id, isouter=True)
-            .group_by(Dish.submenu_id)
-        )
-
+    async def show(cls, menu_id: uuid.UUID | None = None):
         session: AsyncSession
         async with async_session() as session:
-            res = await cls.__unioned_result(session, stmt1, stmt2)
-            if kwargs and res:
+            res = await cls.__get_menu_info(session, menu_id)
+            if menu_id and res:
                 return res[0]
+
             return res
 
     @classmethod
-    async def __unioned_result(cls, session: AsyncSession, stmt1, stmt2):
-        result1 = await session.execute(stmt1)
-        result2 = await session.execute(stmt2)
-        res1 = result1.mappings().all()
-        res2 = result2.mappings().all()
-        return [dict(**r1, **r2) for r1, r2 in zip(res1, res2)]
+    async def __get_menu_info(
+        cls,
+        session: AsyncSession,
+        menu_id: uuid.UUID | None = None,
+    ):
+        menu_alias = aliased(Menu)
+        submenu_alias = aliased(Submenu)
+        dish_alias = aliased(Dish)
+
+        submenus_count_subq = (
+            select(func.count())
+            .select_from(submenu_alias)
+            .where(submenu_alias.menu_id == menu_alias.id)
+            .as_scalar()
+        )
+
+        dishes_count_subq = (
+            select(func.count())
+            .select_from(dish_alias)
+            .join(submenu_alias, dish_alias.submenu)
+            .where(submenu_alias.menu_id == menu_alias.id)
+            .as_scalar()
+        )
+
+        menus_query = (
+            select(
+                menu_alias.id,
+                menu_alias.title,
+                menu_alias.description,
+                submenus_count_subq.label("submenus_count"),
+                dishes_count_subq.label("dishes_count"),
+            )
+            .group_by(menu_alias.id)
+        )
+
+        if menu_id:
+            menus_query = menus_query.having(menu_alias.id == menu_id)
+
+        menus = await session.execute(menus_query)
+        return menus.mappings().all()

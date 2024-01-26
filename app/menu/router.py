@@ -21,7 +21,7 @@ async def add_menu(menu: SMenu, responce: Response):
         raise SimilarMenuTitlesException
 
     responce.status_code = status.HTTP_201_CREATED
-    added_menu = await MenuDAO.show(id=menu_res["id"])
+    added_menu = await MenuDAO.show(menu_res["id"])
     return added_menu
 
 
@@ -34,7 +34,7 @@ async def show_menus():
 
 @router.get("/{menu_id}")
 async def show_menu_by_id(menu_id: uuid.UUID):
-    menu = await MenuDAO.show(id=menu_id)
+    menu = await MenuDAO.show(menu_id)
     if not menu:
         raise MenuNotFoundException
 
@@ -43,7 +43,7 @@ async def show_menu_by_id(menu_id: uuid.UUID):
 
 @router.patch("/{menu_id}")
 async def update_menu(menu_id: uuid.UUID, new_data: SMenu):
-    menu = await MenuDAO.show(id=menu_id)
+    menu = await MenuDAO.show(menu_id)
     if not menu:
         raise MenuNotFoundException
 
@@ -53,7 +53,7 @@ async def update_menu(menu_id: uuid.UUID, new_data: SMenu):
         description=new_data.description,
     )
 
-    menu_res = await MenuDAO.show(id=updated_menu["id"])
+    menu_res = await MenuDAO.show(updated_menu["id"])
 
     return menu_res
 
