@@ -142,7 +142,6 @@ async def test_update_non_existent_menu(
     assert response.status_code == HTTPStatus.NOT_FOUND
 
 
-
 async def test_get_updated_menu_by_id(
     saved_data: dict[str, Any],
     ac: AsyncClient,
@@ -184,7 +183,7 @@ async def test_delete_menu(
     assert response.status_code == HTTPStatus.OK, "The response status is not 200"
     assert (
         response.json()["message"] == "The menu has been deleted"
-    ), "The deletion message does not match the expected on"
+    ), "The deletion message does not match the expected response"
 
 
 async def test_get_deleted_menu(
@@ -200,4 +199,4 @@ async def test_get_deleted_menu(
     ), "The response status is not 404"
     assert (
         response.json()["detail"] == "menu not found"
-    ), "The deletion message does not match the expected on"
+    ), "The deletion message does not match the expected response"
