@@ -24,16 +24,13 @@ async def add_submenu(menu_id: uuid.UUID, menu: SSubMenu, responce: Response):
     except IntegrityError:
         raise SimilarSubmenuTitlesException
     responce.status_code = status.HTTP_201_CREATED
-    added_submenu = await SubmenuDAO.show(id=submenu["id"])
+    added_submenu = await SubmenuDAO.show(menu_id, submenu["id"])
     return added_submenu
 
 
 @router.get("/{menu_id}/submenus/{submenu_id}")
 async def show_submenu_by_id(menu_id: uuid.UUID, submenu_id: uuid.UUID):
-    submenu = await SubmenuDAO.show(
-        id=submenu_id,
-        menu_id=menu_id,
-    )
+    submenu = await SubmenuDAO.show(menu_id, submenu_id)
     if not submenu:
         raise SubMenuNotFoundException
 
@@ -42,7 +39,7 @@ async def show_submenu_by_id(menu_id: uuid.UUID, submenu_id: uuid.UUID):
 
 @router.get("/{menu_id}/submenus")
 async def show_submenus(menu_id: uuid.UUID):
-    sub_menus = await SubmenuDAO.show(menu_id=menu_id)
+    sub_menus = await SubmenuDAO.show(menu_id)
 
     return sub_menus
 
@@ -53,20 +50,17 @@ async def update_submenu(
     submenu_id: uuid.UUID,
     new_data: SSubMenu,
 ):
-    submenu = await SubmenuDAO.show(
-        id=submenu_id,
-        menu_id=menu_id,
-    )
+    submenu = await SubmenuDAO.show(menu_id, submenu_id)
     if not submenu:
         raise SubMenuNotFoundException
 
-    updated_menu = await SubmenuDAO.update(
+    updated_submenu = await SubmenuDAO.update(
         submenu_id,
         title=new_data.title,
         description=new_data.description,
     )
 
-    submenu_res = await SubmenuDAO.show(id=updated_menu["id"])
+    submenu_res = await SubmenuDAO.show(menu_id, updated_submenu["id"])
 
     return submenu_res
 

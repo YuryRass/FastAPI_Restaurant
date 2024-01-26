@@ -20,7 +20,7 @@ async def add_dish(
     dish: SDish,
     responce: Response,
 ):
-    finded_submenu = await SubmenuDAO.show(id=submenu_id, menu_id=menu_id)
+    finded_submenu = await SubmenuDAO.show(menu_id, submenu_id)
     if finded_submenu:
         dish = await DishDAO.add(
             title=dish.title,

@@ -1,4 +1,6 @@
-from sqlalchemy import func, select
+import uuid
+from sqlalchemy import and_, func, select
+from sqlalchemy.orm import aliased
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dao.base import BaseDAO
@@ -11,20 +13,35 @@ class SubmenuDAO(BaseDAO):
     model = Submenu
 
     @classmethod
-    async def show(cls, **kwargs):
+    async def show(cls, menu_id: uuid.UUID, submenu_id: uuid.UUID | None = None):
+        submenu_alias = aliased(Submenu)
+        dish_alias = aliased(Dish)
+
+        dishes_count = (
+            select(func.count())
+            .select_from(submenu_alias)
+            .where(submenu_alias.id == dish_alias.submenu_id)
+            .as_scalar()
+        )
+
+        is_submenu_id = True
+        if submenu_id:
+            is_submenu_id = submenu_alias.id == submenu_id
+
         stmt = (
             select(
-                Submenu.id,
-                Submenu.title,
-                Submenu.description,
-                func.count(Dish.submenu_id)
-                .filter(Dish.submenu_id.is_not(None))
-                .label("dishes_count"),
+                submenu_alias.id,
+                submenu_alias.title,
+                submenu_alias.description,
+                dishes_count.label("dishes_count"),
             )
-            .select_from(Submenu)
-            .filter_by(**kwargs)
-            .join(Dish, Submenu.id == Dish.submenu_id, isouter=True)
-            .group_by(Submenu.id, Dish.submenu_id)
+            .group_by(submenu_alias.id)
+            .having(
+                and_(
+                    submenu_alias.menu_id == menu_id,
+                    is_submenu_id,
+                )
+            )
         )
 
         session: AsyncSession
