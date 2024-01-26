@@ -263,60 +263,66 @@ async def test_get_menu_after_delete(
     ), "The deletion message does not match the expected on"
 
 
-# async def test_post_objects_for_cascade_check(
-#     menu_post: dict[str, str],
-#     submenu_post: dict[str, str],
-#     saved_data: dict[str, Any],
-#     client: AsyncClient,
-# ) -> None:
-#     """Добавление нового меню и подменю для последующей проверки
-#     каскадного удаления."""
-#     response = await client.post(
-#         reverse(post_new_menu),
-#         json=menu_post,
-#     )
-#     assert response.status_code == HTTPStatus.CREATED, \
-#         'Статус ответа не 201'
+async def test_post_for_cascade_deletion(
+    menu_post: dict[str, str],
+    submenu_post: dict[str, str],
+    saved_data: dict[str, Any],
+    ac: AsyncClient,
+) -> None:
+    """
+    Добавление нового меню и подменю
+    для последующей проверки каскадного удаления
+    """
 
-#     saved_data['menu'] = response.json()
+    # Добавление нового меню
+    response = await ac.post(
+        url="/menus",
+        json=menu_post,
+    )
+    assert response.status_code == HTTPStatus.CREATED, "The response status is not 200"
 
-#     menu = saved_data['menu']
-#     response = await client.post(
-#         reverse(post_new_submenu, menu_id=menu['id']),
-#         json=submenu_post,
-#     )
-#     assert response.status_code == HTTPStatus.CREATED, \
-#         'Статус ответа не 201'
+    saved_data["menu"] = response.json()
 
-#     saved_data['submenu'] = response.json()
+    menu = saved_data["menu"]
 
+    # Добавление нового подменю
+    response = await ac.post(
+        url=f"/menus/{menu['id']}/submenus",
+        json=submenu_post,
+    )
+    assert response.status_code == HTTPStatus.CREATED, "The response status is not 200"
 
-# async def test_delete_menu_for_cascade_check(
-#     saved_data: dict[str, Any],
-#     client: AsyncClient,
-# ) -> None:
-#     """Удаление текущего меню."""
-#     menu = saved_data['menu']
-#     response = await client.delete(
-#         reverse(destroy_menu, menu_id=menu['id']),
-#     )
-#     assert response.status_code == HTTPStatus.OK, \
-#         'Статус ответа не 200'
-#     assert response.text == '"menu deleted"', \
-#         'Сообщение об удалении не соответствует ожидаемому'
+    saved_data["submenu"] = response.json()
 
 
-# async def test_get_deleted_submenu_cascade_check(
-#     saved_data: dict[str, Any],
-#     client: AsyncClient,
-# ) -> None:
-#     """Получение подменю удаленного меню, проверка каскадного удаления."""
-#     menu = saved_data['menu']
-#     submenu = saved_data['submenu']
-#     response = await client.get(
-#         reverse(get_submenu, menu_id=menu['id'], submenu_id=submenu['id']),
-#     )
-#     assert response.status_code == HTTPStatus.NOT_FOUND, \
-#         'Статус ответа не 404'
-#     assert response.json()['detail'] == 'submenu not found', \
-#         'Сообщение об ошибке не соответствует ожидаемому'
+async def test_cascade_delete_menu(
+    saved_data: dict[str, Any],
+    ac: AsyncClient,
+) -> None:
+    """Каскадное удаление меню"""
+
+    menu = saved_data["menu"]
+    response = await ac.delete(url=f"/menus/{menu['id']}")
+    assert response.status_code == HTTPStatus.OK, "The response status is not 200"
+    assert (
+        response.json()["message"] == "The menu has been deleted"
+    ), "The deletion message does not match the expected response"
+
+
+async def test_get_submenu_after_cascade_deletion(
+    saved_data: dict[str, Any],
+    ac: AsyncClient,
+) -> None:
+    """Проверка отсутствия подменю после каскадного удаления меню"""
+
+    menu = saved_data["menu"]
+    submenu = saved_data["submenu"]
+    response = await ac.get(
+        url=f"/menus/{menu['id']}/submenus/{submenu['id']}",
+    )
+    assert (
+        response.status_code == HTTPStatus.NOT_FOUND
+    ), "The response status is not 404"
+    assert (
+        response.json()["detail"] == "submenu not found"
+    ), "The deletion message does not match the expected response"
