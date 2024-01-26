@@ -1,10 +1,10 @@
 import uuid
-
+from sqlalchemy.exc import IntegrityError
 from fastapi import APIRouter, Response, status
 
 from app.dish.dao import DishDAO
 from app.dish.shemas import OutSDish, SDish
-from app.exceptions import DishNotFoundException
+from app.exceptions import DishNotFoundException, SimilarDishTitlesException
 from app.submenu.dao import SubmenuDAO
 
 router: APIRouter = APIRouter(
@@ -21,16 +21,19 @@ async def add_dish(
     responce: Response,
 ):
     finded_submenu = await SubmenuDAO.show(menu_id, submenu_id)
-    if finded_submenu:
-        dish = await DishDAO.add(
-            title=dish.title,
-            description=dish.description,
-            price=dish.price,
-            submenu_id=submenu_id,
-        )
-        responce.status_code = status.HTTP_201_CREATED
-        added_dish = await DishDAO.show(menu_id, submenu_id, dish["id"])
-        return OutSDish(**dict(added_dish))
+    try:
+        if finded_submenu:
+            dish = await DishDAO.add(
+                title=dish.title,
+                description=dish.description,
+                price=dish.price,
+                submenu_id=submenu_id,
+            )
+    except IntegrityError:
+        raise SimilarDishTitlesException
+    responce.status_code = status.HTTP_201_CREATED
+    added_dish = await DishDAO.show(menu_id, submenu_id, dish["id"])
+    return OutSDish(**dict(added_dish))
 
 
 @router.get("/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}")

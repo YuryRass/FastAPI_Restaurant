@@ -80,7 +80,7 @@ def dish_post() -> dict[str, str]:
     return {
         "title": "My dish",
         "description": "Dish description",
-        "price": "12.905645",
+        "price": "12.67115645",
     }
 
 

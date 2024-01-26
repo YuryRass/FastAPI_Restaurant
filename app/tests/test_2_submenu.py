@@ -260,7 +260,7 @@ async def test_get_menu_after_delete(
     ), "The response status is not 404"
     assert (
         response.json()["detail"] == "menu not found"
-    ), "The deletion message does not match the expected on"
+    ), "The error message does not match the expected on"
 
 
 async def test_post_for_cascade_deletion(

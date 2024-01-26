@@ -199,4 +199,4 @@ async def test_get_deleted_menu(
     ), "The response status is not 404"
     assert (
         response.json()["detail"] == "menu not found"
-    ), "The deletion message does not match the expected response"
+    ), "The error message does not match the expected response"
