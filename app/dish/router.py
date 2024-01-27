@@ -24,7 +24,7 @@ async def add_dish(
     finded_submenu = await SubmenuDAO.show(menu_id, submenu_id)
     try:
         if finded_submenu:
-            dish = await DishDAO.add(
+            new_dish = await DishDAO.add(
                 title=dish.title,
                 description=dish.description,
                 price=dish.price,
@@ -33,7 +33,7 @@ async def add_dish(
     except IntegrityError:
         raise SimilarDishTitlesException
     responce.status_code = status.HTTP_201_CREATED
-    added_dish = await DishDAO.show(menu_id, submenu_id, dish["id"])
+    added_dish = await DishDAO.show(menu_id, submenu_id, new_dish["id"])
     return OutSDish(**added_dish)
 
 
