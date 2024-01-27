@@ -1,7 +1,7 @@
 import uuid
-from sqlalchemy.exc import IntegrityError
 
 from fastapi import APIRouter, Response, status
+from sqlalchemy.exc import IntegrityError
 
 from app.exceptions import MenuNotFoundException, SimilarMenuTitlesException
 from app.menu.dao import MenuDAO

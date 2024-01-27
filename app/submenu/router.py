@@ -3,7 +3,7 @@ import uuid
 from fastapi import APIRouter, Response, status
 from sqlalchemy.exc import IntegrityError
 
-from app.exceptions import SubMenuNotFoundException, SimilarSubmenuTitlesException
+from app.exceptions import SimilarSubmenuTitlesException, SubMenuNotFoundException
 from app.submenu.dao import SubmenuDAO
 from app.submenu.shemas import SSubMenu
 

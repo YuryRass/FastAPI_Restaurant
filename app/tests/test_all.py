@@ -1,6 +1,6 @@
+import uuid
 from http import HTTPStatus
 from typing import Any
-import uuid
 
 from httpx import AsyncClient, Response
 

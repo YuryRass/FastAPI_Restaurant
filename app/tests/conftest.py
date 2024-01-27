@@ -1,12 +1,12 @@
 import uuid
-import sqlalchemy
 from typing import Any
+
 import pytest
+import sqlalchemy
 from httpx import AsyncClient
 
 from app.config import settings
 from app.database import Base, async_engine
-
 from app.main import app as fastapi_app
 
 

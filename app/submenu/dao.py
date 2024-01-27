@@ -1,7 +1,8 @@
 import uuid
+
 from sqlalchemy import and_, func, select
-from sqlalchemy.orm import aliased
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import aliased
 
 from app.dao.base import BaseDAO
 from app.database import async_session

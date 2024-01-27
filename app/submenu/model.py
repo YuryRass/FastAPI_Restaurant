@@ -1,15 +1,14 @@
-from typing import TYPE_CHECKING
 import uuid
+from typing import TYPE_CHECKING
 
 from sqlalchemy import UUID, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 
-
 if TYPE_CHECKING:
-    from app.menu.model import Menu
     from app.dish.model import Dish
+    from app.menu.model import Menu
 
 
 class Submenu(Base):
