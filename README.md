@@ -13,12 +13,12 @@ git clone https://github.com/YuryRass/FastAPI_Restaurant.git
 cd FastAPI_Restaurant
 ```
 
-В корне проекта переименуйте конфигурационные файлы `.env.psql-example` и `.env-example` на `.env.psql` и `.env`
+В корне проекта переименуйте конфигурационные файлы `.env.example` и `.env_test.example` на `.env` и `.env_test`
 
 На операционной системе Linux переименовать файлы можно следующей командой:
 
 ```bash
-mv .env.psql-example .env.psql && mv .env-example .env
+mv .env.example .env && mv .env_test.example .env_test
 ```
 
 Для запуска проекта введите команду:
