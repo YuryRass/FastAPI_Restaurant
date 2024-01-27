@@ -11,14 +11,16 @@ services:
       - POSTGRES_DB=${TEST_DB_NAME}
     ports:
       - 4321:5432
-
+    volumes:
+      - psql_pytest_network:/var/lib/postgresql/data/
+    networks:
+      - my_network_pytest
     healthcheck:
       test: pg_isready -U ${TEST_DB_USER} -d ${TEST_DB_NAME}
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
-
     restart: unless-stopped
 
   test_restaurant_app:
@@ -33,3 +35,12 @@ services:
         condition: service_healthy
     ports:
       - 9000:8000
+    networks:
+      - my_network_pytest
+
+networks:
+  my_network_pytest:
+    name: my_network_pytest
+volumes:
+  psql_pytest_network:
+    name: psql_pytest_network
