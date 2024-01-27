@@ -34,7 +34,7 @@ async def add_dish(
         raise SimilarDishTitlesException
     responce.status_code = status.HTTP_201_CREATED
     added_dish = await DishDAO.show(menu_id, submenu_id, dish["id"])
-    return OutSDish(**dict(added_dish))
+    return OutSDish(**added_dish)
 
 
 @router.get("/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}")
@@ -48,7 +48,7 @@ async def show_dish_by_id(
     if not dish:
         raise DishNotFoundException
 
-    return OutSDish(**dict(dish))
+    return OutSDish(**dish)
 
 
 @router.get("/{menu_id}/submenus/{submenu_id}/dishes")
@@ -78,7 +78,7 @@ async def update_dish(
 
     dish = await DishDAO.show(menu_id, submenu_id, updated_dish["id"])
 
-    return OutSDish(**dict(dish))
+    return OutSDish(**dish)
 
 
 @router.delete("/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}")
