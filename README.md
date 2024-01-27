@@ -20,15 +20,23 @@ cd FastAPI_Restaurant
 ```bash
 mv .env.example .env && mv .env_test.example .env_test
 ```
+### Основной запуск проекта
 
-Для запуска проекта введите команду:
+Для основного запуска проекта введите команду:
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 Для запуска проекта в фоновом режиме необходимо добавить флаг `-d`:
 
 ```bash
-docker-compose up --build -d
+docker compose up --build -d
+```
+### Запуск проекта с прохождением тестов
+
+Для запуска проекта с прохождением тестов через pytest используйте команду:
+
+```bash
+docker compose -f docker-compose-test.yml up --build
 ```
