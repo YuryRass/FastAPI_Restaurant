@@ -1,4 +1,5 @@
 """Основной DAO (Data Access Object)"""
+
 import uuid
 
 from sqlalchemy import delete, insert, update

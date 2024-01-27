@@ -1,4 +1,5 @@
 """Различные HTTP-ошибки"""
+
 from fastapi import HTTPException, status
 
 
@@ -24,6 +25,7 @@ class DishNotFoundException(RestaurantException):
     status_code = status.HTTP_404_NOT_FOUND
     detail = "dish not found"
 
+
 class SimilarMenuTitlesException(RestaurantException):
     status_code = status.HTTP_400_BAD_REQUEST
     detail = "menu titles must be unique"
@@ -32,6 +34,7 @@ class SimilarMenuTitlesException(RestaurantException):
 class SimilarSubmenuTitlesException(RestaurantException):
     status_code = status.HTTP_400_BAD_REQUEST
     detail = "submenu titles must be unique"
+
 
 class SimilarDishTitlesException(RestaurantException):
     status_code = status.HTTP_400_BAD_REQUEST
