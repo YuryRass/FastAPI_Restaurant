@@ -48,3 +48,9 @@ docker compose -f docker-compose-test.yml up --build -d && docker logs --follow 
 ## Количество подменю и блюд
 
 Вывод количества подменю и блюд для Меню через один (сложный) ORM запрос реализован в файле `app/menu/dao.py` в методе `show` класса `MenuDAO`
+
+## Контакты
+
+**telegram** [@YurySundown](https://t.me/YurySundown)
+
+**e-mail** <yurchik1997yurchik@gmail.com>
