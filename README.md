@@ -29,7 +29,7 @@ mv .env.example .env && mv .env_test.example .env_test
 
 
 ```bash
-docker compose up -d --build
+docker compose up -d --build --remove-orphans
 ```
 ### Запуск проекта с прохождением тестов
 
