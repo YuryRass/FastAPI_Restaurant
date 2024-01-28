@@ -29,7 +29,7 @@ mv .env.example .env && mv .env_test.example .env_test
 
 
 ```bash
-docker compose up --build -d
+docker compose up -d --build
 ```
 ### Запуск проекта с прохождением тестов
 
@@ -45,7 +45,7 @@ docker compose up --build -d
 Для запуска проекта с прохождением тестов через pytest используйте команду:
 
 ```bash
-docker compose -f docker-compose-test.yml up --build -d && docker logs --follow test_rest_app && docker compose -f docker-compose-test.yml down -v
+docker compose -f docker-compose-test.yml up -d --build --remove-orphans && docker logs --follow test_rest_app && docker compose -f docker-compose-test.yml down -v
 ```
 
 ## Количество подменю и блюд
