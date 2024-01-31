@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app.exceptions import SimilarSubmenuTitlesException, SubMenuNotFoundException
 from app.submenu.dao import SubmenuDAO
-from app.submenu.shemas import SSubMenu
+from app.submenu.shemas import OutSSubMenu, SSubMenu
 
 router: APIRouter = APIRouter(
     prefix="/menus",
@@ -14,7 +14,9 @@ router: APIRouter = APIRouter(
 
 
 @router.post("/{menu_id}/submenus")
-async def add_submenu(menu_id: uuid.UUID, menu: SSubMenu, responce: Response):
+async def add_submenu(
+    menu_id: uuid.UUID, menu: SSubMenu, responce: Response
+) -> OutSSubMenu:
     try:
         submenu = await SubmenuDAO.add(
             title=menu.title,
@@ -29,7 +31,7 @@ async def add_submenu(menu_id: uuid.UUID, menu: SSubMenu, responce: Response):
 
 
 @router.get("/{menu_id}/submenus/{submenu_id}")
-async def show_submenu_by_id(menu_id: uuid.UUID, submenu_id: uuid.UUID):
+async def show_submenu_by_id(menu_id: uuid.UUID, submenu_id: uuid.UUID) -> OutSSubMenu:
     submenu = await SubmenuDAO.show(menu_id, submenu_id)
     if not submenu:
         raise SubMenuNotFoundException
@@ -38,7 +40,7 @@ async def show_submenu_by_id(menu_id: uuid.UUID, submenu_id: uuid.UUID):
 
 
 @router.get("/{menu_id}/submenus")
-async def show_submenus(menu_id: uuid.UUID):
+async def show_submenus(menu_id: uuid.UUID) -> list[OutSSubMenu] | OutSSubMenu:
     sub_menus = await SubmenuDAO.show(menu_id)
 
     return sub_menus
@@ -49,7 +51,7 @@ async def update_submenu(
     menu_id: uuid.UUID,
     submenu_id: uuid.UUID,
     new_data: SSubMenu,
-):
+) -> OutSSubMenu:
     submenu = await SubmenuDAO.show(menu_id, submenu_id)
     if not submenu:
         raise SubMenuNotFoundException
@@ -66,7 +68,9 @@ async def update_submenu(
 
 
 @router.delete("/{menu_id}/submenus/{submenu_id}")
-async def delete_menu(menu_id: uuid.UUID, submenu_id: uuid.UUID):
+async def delete_submenu(
+    menu_id: uuid.UUID, submenu_id: uuid.UUID
+) -> dict[str, bool | str]:
     menu = await SubmenuDAO.delete_record(id=submenu_id, menu_id=menu_id)
     if menu:
         return {"status": True, "message": "The submenu has been deleted"}

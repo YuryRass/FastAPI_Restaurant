@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app.exceptions import MenuNotFoundException, SimilarMenuTitlesException
 from app.menu.dao import MenuDAO
-from app.menu.shemas import SMenu
+from app.menu.shemas import SMenu, OutSMenu
 
 router: APIRouter = APIRouter(
     prefix="/menus",
@@ -14,9 +14,12 @@ router: APIRouter = APIRouter(
 
 
 @router.post("")
-async def add_menu(menu: SMenu, responce: Response):
+async def add_menu(menu: SMenu, responce: Response) -> OutSMenu:
     try:
-        menu_res = await MenuDAO.add(title=menu.title, description=menu.description)
+        menu_res = await MenuDAO.add(
+            title=menu.title,
+            description=menu.description,
+        )
     except IntegrityError:
         raise SimilarMenuTitlesException
 
@@ -26,14 +29,14 @@ async def add_menu(menu: SMenu, responce: Response):
 
 
 @router.get("")
-async def show_menus():
+async def show_menus() -> list[OutSMenu]:
     menus = await MenuDAO.show()
 
     return menus
 
 
 @router.get("/{menu_id}")
-async def show_menu_by_id(menu_id: uuid.UUID):
+async def show_menu_by_id(menu_id: uuid.UUID) -> OutSMenu:
     menu = await MenuDAO.show(menu_id)
     if not menu:
         raise MenuNotFoundException
@@ -42,7 +45,7 @@ async def show_menu_by_id(menu_id: uuid.UUID):
 
 
 @router.patch("/{menu_id}")
-async def update_menu(menu_id: uuid.UUID, new_data: SMenu):
+async def update_menu(menu_id: uuid.UUID, new_data: SMenu) -> OutSMenu:
     menu = await MenuDAO.show(menu_id)
     if not menu:
         raise MenuNotFoundException
@@ -59,7 +62,7 @@ async def update_menu(menu_id: uuid.UUID, new_data: SMenu):
 
 
 @router.delete("/{menu_id}")
-async def delete_menu(menu_id: uuid.UUID):
+async def delete_menu(menu_id: uuid.UUID) -> dict[str, bool | str]:
     menu = await MenuDAO.delete_record(id=menu_id)
     if menu:
         return {"status": True, "message": "The menu has been deleted"}

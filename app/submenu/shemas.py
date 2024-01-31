@@ -1,6 +1,12 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, UUID4
 
 
 class SSubMenu(BaseModel):
     title: str
     description: str
+
+class OutSSubMenu(BaseModel):
+    id: UUID4
+    title: str
+    description: str
+    dishes_count: int

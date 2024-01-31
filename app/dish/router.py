@@ -20,7 +20,7 @@ async def add_dish(
     submenu_id: uuid.UUID,
     dish: SDish,
     responce: Response,
-):
+) -> OutSDish:
     finded_submenu = await SubmenuDAO.show(menu_id, submenu_id)
     try:
         if finded_submenu:
@@ -34,7 +34,7 @@ async def add_dish(
         raise SimilarDishTitlesException
     responce.status_code = status.HTTP_201_CREATED
     added_dish = await DishDAO.show(menu_id, submenu_id, new_dish["id"])
-    return OutSDish(**added_dish)
+    return added_dish
 
 
 @router.get("/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}")
@@ -42,17 +42,19 @@ async def show_dish_by_id(
     menu_id: uuid.UUID,
     submenu_id: uuid.UUID,
     dish_id: uuid.UUID,
-):
+) -> OutSDish:
     dish = await DishDAO.show(menu_id, submenu_id, dish_id)
 
     if not dish:
         raise DishNotFoundException
 
-    return OutSDish(**dish)
+    return dish
 
 
 @router.get("/{menu_id}/submenus/{submenu_id}/dishes")
-async def show_dishes(menu_id: uuid.UUID, submenu_id: uuid.UUID):
+async def show_dishes(
+    menu_id: uuid.UUID, submenu_id: uuid.UUID
+) -> list[OutSDish]:
     dishes = await DishDAO.show(menu_id, submenu_id)
 
     return dishes
@@ -64,7 +66,7 @@ async def update_dish(
     submenu_id: uuid.UUID,
     dish_id: uuid.UUID,
     new_data: SDish,
-):
+) -> OutSDish:
     dish = await DishDAO.show(menu_id, submenu_id, dish_id)
     if not dish:
         raise DishNotFoundException
@@ -76,9 +78,9 @@ async def update_dish(
         price=new_data.price,
     )
 
-    dish = await DishDAO.show(menu_id, submenu_id, updated_dish["id"])
+    new_dish = await DishDAO.show(menu_id, submenu_id, updated_dish["id"])
 
-    return OutSDish(**dish)
+    return new_dish
 
 
 @router.delete("/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}")
@@ -86,7 +88,7 @@ async def delete_dish(
     menu_id: uuid.UUID,
     submenu_id: uuid.UUID,
     dish_id: uuid.UUID,
-):
+) -> dict[str, bool | str]:
     dish = await DishDAO.show(menu_id, submenu_id, dish_id)
     if dish:
         await DishDAO.delete_record(id=dish_id, submenu_id=submenu_id)

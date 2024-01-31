@@ -19,7 +19,9 @@ else:
 
 async_engine: AsyncEngine = create_async_engine(DATABASE_URL, **DATABASE_PARAMS)
 
-async_session = async_sessionmaker(async_engine, expire_on_commit=False)
+async_session: async_sessionmaker = async_sessionmaker(
+    async_engine, expire_on_commit=False
+)
 
 
 class Base(DeclarativeBase):

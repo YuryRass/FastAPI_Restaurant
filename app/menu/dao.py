@@ -4,6 +4,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 
+from app.dao import MappingOut
 from app.dao.base import BaseDAO
 from app.database import async_session
 from app.dish.model import Dish
@@ -18,7 +19,7 @@ class MenuDAO(BaseDAO):
     async def show(
         cls,
         menu_id: uuid.UUID | None = None,
-    ):
+    ) -> MappingOut:
         session: AsyncSession
         async with async_session() as session:
             res = await cls.__get_menu_info(session, menu_id)
@@ -30,7 +31,7 @@ class MenuDAO(BaseDAO):
         cls,
         session: AsyncSession,
         menu_id: uuid.UUID | None = None,
-    ):
+    ) -> MappingOut:
         menu_alias = aliased(Menu)
         submenu_alias = aliased(Submenu)
         dish_alias = aliased(Dish)
