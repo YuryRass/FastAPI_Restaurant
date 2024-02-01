@@ -12,7 +12,7 @@ class Menu(Base):
     title: Mapped[str] = mapped_column(unique=True)
     description: Mapped[str | None]
 
-    submenus: Mapped[list["Submenu"]] = relationship(
-        back_populates="menu",
-        cascade="all, delete",
+    submenus: Mapped[list['Submenu']] = relationship(
+        back_populates='menu',
+        cascade='all, delete',
     )

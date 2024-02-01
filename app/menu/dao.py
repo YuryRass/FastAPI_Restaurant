@@ -55,8 +55,8 @@ class MenuDAO(BaseDAO):
             menu_alias.id,
             menu_alias.title,
             menu_alias.description,
-            submenus_count_subq.label("submenus_count"),
-            dishes_count_subq.label("dishes_count"),
+            submenus_count_subq.label('submenus_count'),
+            dishes_count_subq.label('dishes_count'),
         ).group_by(menu_alias.id)
 
         if menu_id:

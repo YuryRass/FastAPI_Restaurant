@@ -12,7 +12,7 @@ class SUUId(BaseModel):
 
 
 class OutSDish(SDish, SUUId):
-    @field_validator("price")
+    @field_validator('price')
     @classmethod
     def to_str(cls, value) -> str:
         if isinstance(value, float):

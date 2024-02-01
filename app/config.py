@@ -26,14 +26,14 @@ class Settings(BaseSettings):
     def DATABASE_URL(self) -> str:
         return (
             f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@"
-            + f"{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+            f"{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
         )
 
     @property
     def TEST_DATABASE_URL(self) -> str:
         return (
             f"postgresql+asyncpg://{self.TEST_DB_USER}:{self.TEST_DB_PASS}@"
-            + f"{self.TEST_DB_HOST}:{self.TEST_DB_PORT}/{self.TEST_DB_NAME}"
+            f"{self.TEST_DB_HOST}:{self.TEST_DB_PORT}/{self.TEST_DB_NAME}"
         )
 
     model_config = SettingsConfigDict(env_file=".env")

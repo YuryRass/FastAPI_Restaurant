@@ -57,7 +57,7 @@ class SubmenuDAO(BaseDAO):
                 submenu_alias.id,
                 submenu_alias.title,
                 submenu_alias.description,
-                dishes_count.label("dishes_count"),
+                dishes_count.label('dishes_count'),
             )
             .group_by(submenu_alias.id)
             .having(

@@ -10,6 +10,7 @@ from app.database import async_session
 
 
 class BaseDAO:
+    """Класс, описывающий основные CRUD операции для моделей"""
     model: ModelType = None
 
     @classmethod
