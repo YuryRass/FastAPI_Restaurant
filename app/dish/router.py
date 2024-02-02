@@ -107,3 +107,4 @@ async def delete_dish(
     if dish:
         await DishDAO.delete_record(id=dish_id, submenu_id=submenu_id)
         return {'status': True, 'message': 'The dish has been deleted'}
+    return {'status': False, 'message': 'Dish not found'}

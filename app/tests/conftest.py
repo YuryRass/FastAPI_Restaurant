@@ -9,24 +9,24 @@ from app.database import Base, async_engine
 from app.main import app as fastapi_app
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope='session', autouse=True)
 async def prepare_database():
     """Создание тестовой базы данных"""
 
-    assert settings.MODE == "TEST"
+    assert settings.MODE == 'TEST'
 
     async with async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope='function')
 async def ac():
     """Асинхронный HTTP клиент"""
 
     async with AsyncClient(
         app=fastapi_app,
-        base_url="http://test/api/v1",
+        base_url='http://test/api/v1',
     ) as ac:
         yield ac
 
@@ -35,23 +35,23 @@ async def ac():
 def menu_post() -> dict[str, str]:
     """Меню для POST запроса"""
     return {
-        "title": "menu-1",
-        "description": "Menu description",
+        'title': 'menu-1',
+        'description': 'Menu description',
     }
 
 
 @pytest.fixture
 def non_existen_menu_id() -> uuid.UUID:
     """Меню для POST запроса"""
-    return uuid.UUID("3beeb1f1-2ec2-475e-bd38-4952f2e4235b")
+    return uuid.UUID('3beeb1f1-2ec2-475e-bd38-4952f2e4235b')
 
 
 @pytest.fixture
 def menu_patch() -> dict[str, str]:
     """Меню для PATCH запроса"""
     return {
-        "title": "New menu",
-        "description": "New menu description",
+        'title': 'New menu',
+        'description': 'New menu description',
     }
 
 
@@ -59,8 +59,8 @@ def menu_patch() -> dict[str, str]:
 def submenu_post() -> dict[str, str]:
     """Подменю для POST запроса"""
     return {
-        "title": "submenu-1",
-        "description": "Submenu description",
+        'title': 'submenu-1',
+        'description': 'Submenu description',
     }
 
 
@@ -68,8 +68,8 @@ def submenu_post() -> dict[str, str]:
 def submenu_patch() -> dict[str, str]:
     """Подменю для PATCH запроса"""
     return {
-        "title": "New submenu",
-        "description": "New submenu description",
+        'title': 'New submenu',
+        'description': 'New submenu description',
     }
 
 
@@ -77,9 +77,9 @@ def submenu_patch() -> dict[str, str]:
 def dish_post() -> dict[str, str]:
     """Блюда для POST запроса"""
     return {
-        "title": "My dish",
-        "description": "Dish description",
-        "price": "12.67115645",
+        'title': 'My dish',
+        'description': 'Dish description',
+        'price': '12.67115645',
     }
 
 
@@ -87,9 +87,9 @@ def dish_post() -> dict[str, str]:
 def dish_2_post() -> dict[str, str]:
     """Второе блюдо для POST запроса"""
     return {
-        "title": "Second dish",
-        "description": "Some another description",
-        "price": "654.123",
+        'title': 'Second dish',
+        'description': 'Some another description',
+        'price': '654.123',
     }
 
 
@@ -97,13 +97,13 @@ def dish_2_post() -> dict[str, str]:
 def dish_patch() -> dict[str, str]:
     """Блюда для PATCH запроса"""
     return {
-        "title": "First dish updated",
-        "description": "Some description updated",
-        "price": "654.123",
+        'title': 'First dish updated',
+        'description': 'Some description updated',
+        'price': '654.123',
     }
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope='module')
 def saved_data() -> dict[str, Any]:
     """Сохраненные данные при POST запросах"""
     return {}

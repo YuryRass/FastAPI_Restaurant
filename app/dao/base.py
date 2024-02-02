@@ -1,20 +1,26 @@
 """Основной DAO (Data Access Object)"""
 import uuid
+from typing import Generic, TypeVar
 
 from sqlalchemy import delete, insert, update
 from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.dao import ModelType
 from app.database import async_session
+from app.dish.model import Dish
+from app.menu.model import Menu
+from app.submenu.model import Submenu
+
+ModelType = TypeVar('ModelType', Dish, Menu, Submenu)
 
 
-class BaseDAO:
+class BaseDAO(Generic[ModelType]):
     """Класс, описывающий основные CRUD операции для моделей"""
-    model: ModelType = None
+    model: type[ModelType]
 
     @classmethod
     async def add(cls, **data) -> RowMapping:
+        assert cls.model is not None
         stmt = insert(cls.model).values(**data).returning(cls.model.id)
         session: AsyncSession
         async with async_session() as session:
@@ -24,6 +30,7 @@ class BaseDAO:
 
     @classmethod
     async def update(cls, model_id: uuid.UUID, **data) -> RowMapping:
+        assert cls.model is not None
         stmt = (
             update(cls.model)
             .where(cls.model.id == model_id)
@@ -38,6 +45,7 @@ class BaseDAO:
 
     @classmethod
     async def delete_record(cls, **kwargs) -> RowMapping | None:
+        assert cls.model is not None
         stmt = delete(cls.model).filter_by(**kwargs).returning(cls.model.id)
 
         session: AsyncSession

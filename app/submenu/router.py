@@ -74,3 +74,4 @@ async def delete_submenu(
     menu = await SubmenuDAO.delete_record(id=submenu_id, menu_id=menu_id)
     if menu:
         return {'status': True, 'message': 'The submenu has been deleted'}
+    return {'status': False, 'message': 'Submenu not found'}

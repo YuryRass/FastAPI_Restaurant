@@ -9,10 +9,10 @@ async def test_menus_is_empty(ac: AsyncClient) -> None:
     """Проверка на пустое меню"""
 
     response: Response = await ac.get(
-        url="/menus",
+        url='/menus',
     )
-    assert response.status_code == HTTPStatus.OK, "The response status is not 200"
-    assert response.json() == [], "There is a non-empty list in the response"
+    assert response.status_code == HTTPStatus.OK, 'The response status is not 200'
+    assert response.json() == [], 'There is a non-empty list in the response'
 
 
 async def test_add_menu(
@@ -23,27 +23,27 @@ async def test_add_menu(
     """Проверка добавления нового меню"""
 
     response: Response = await ac.post(
-        url="/menus",
+        url='/menus',
         json=menu_post,
     )
-    assert response.status_code == HTTPStatus.CREATED, "The response status is not 201"
-    assert "id" in response.json(), "The menu ID is not in the response"
-    assert "title" in response.json(), "The menu title is not in the response"
+    assert response.status_code == HTTPStatus.CREATED, 'The response status is not 201'
+    assert 'id' in response.json(), 'The menu ID is not in the response'
+    assert 'title' in response.json(), 'The menu title is not in the response'
     assert (
-        "description" in response.json()
-    ), "The menu description is not in the response"
+        'description' in response.json()
+    ), 'The menu description is not in the response'
     assert (
-        "submenus_count" in response.json()
-    ), "The submenus_count is not in the response"
-    assert "dishes_count" in response.json(), "The dishes_count is not in the response"
+        'submenus_count' in response.json()
+    ), 'The submenus_count is not in the response'
+    assert 'dishes_count' in response.json(), 'The dishes_count is not in the response'
     assert (
-        response.json()["title"] == menu_post["title"]
-    ), "The menu title does not match the expected response"
+        response.json()['title'] == menu_post['title']
+    ), 'The menu title does not match the expected response'
     assert (
-        response.json()["description"] == menu_post["description"]
-    ), "The menu description does not match the expected response"
+        response.json()['description'] == menu_post['description']
+    ), 'The menu description does not match the expected response'
 
-    saved_data["menu"] = response.json()
+    saved_data['menu'] = response.json()
 
 
 async def test_add_menu_similar(
@@ -53,20 +53,20 @@ async def test_add_menu_similar(
     """Проверка на добавление нового меню с одинаковым названием"""
 
     response: Response = await ac.post(
-        "/menus",
+        '/menus',
         json=menu_post,
     )
     assert (
         response.status_code == HTTPStatus.BAD_REQUEST
-    ), "The response status is not 400"
+    ), 'The response status is not 400'
 
 
 async def test_menus_not_empty(ac: AsyncClient) -> None:
     """Проверка на получение непустого списка меню"""
 
-    response: Response = await ac.get(url="/menus")
-    assert response.status_code == HTTPStatus.OK, "The response status is not 200"
-    assert response.json() != [], "There is an empty list in the response"
+    response: Response = await ac.get(url='/menus')
+    assert response.status_code == HTTPStatus.OK, 'The response status is not 200'
+    assert response.json() != [], 'There is an empty list in the response'
 
 
 async def test_get_menu_by_id(
@@ -75,24 +75,24 @@ async def test_get_menu_by_id(
 ) -> None:
     """Проверка получения меню по его ID"""
 
-    menu = saved_data["menu"]
+    menu = saved_data['menu']
     response: Response = await ac.get(url=f"/menus/{menu['id']}")
-    assert response.status_code == HTTPStatus.OK, "The response status is not 200"
+    assert response.status_code == HTTPStatus.OK, 'The response status is not 200'
     assert (
-        response.json()["id"] == menu["id"]
-    ), "The menu ID does not match the expected response"
+        response.json()['id'] == menu['id']
+    ), 'The menu ID does not match the expected response'
     assert (
-        response.json()["title"] == menu["title"]
-    ), "The menu title does not match the expected response"
+        response.json()['title'] == menu['title']
+    ), 'The menu title does not match the expected response'
     assert (
-        response.json()["description"] == menu["description"]
-    ), "The menu description does not match the expected response"
+        response.json()['description'] == menu['description']
+    ), 'The menu description does not match the expected response'
     assert (
-        response.json()["submenus_count"] == 0
-    ), "The submenu_counts does not match the expected response"
+        response.json()['submenus_count'] == 0
+    ), 'The submenu_counts does not match the expected response'
     assert (
-        response.json()["dishes_count"] == 0
-    ), "The dishes_count does not match the expected response"
+        response.json()['dishes_count'] == 0
+    ), 'The dishes_count does not match the expected response'
 
 
 async def test_update_menu(
@@ -102,29 +102,29 @@ async def test_update_menu(
 ) -> None:
     """Проверка на изменение данных о меню"""
 
-    menu = saved_data["menu"]
+    menu = saved_data['menu']
     response: Response = await ac.patch(
         url=f"/menus/{menu['id']}",
         json=menu_patch,
     )
-    assert response.status_code == HTTPStatus.OK, "The response status is not 200"
-    assert "id" in response.json(), "The menu ID is not in the response"
-    assert "title" in response.json(), "The menu title is not in the response"
+    assert response.status_code == HTTPStatus.OK, 'The response status is not 200'
+    assert 'id' in response.json(), 'The menu ID is not in the response'
+    assert 'title' in response.json(), 'The menu title is not in the response'
     assert (
-        "description" in response.json()
-    ), "The menu description is not in the response"
+        'description' in response.json()
+    ), 'The menu description is not in the response'
     assert (
-        "submenus_count" in response.json()
-    ), "The submenus_count is not in the response"
-    assert "dishes_count" in response.json(), "The dishes_count is not in the response"
+        'submenus_count' in response.json()
+    ), 'The submenus_count is not in the response'
+    assert 'dishes_count' in response.json(), 'The dishes_count is not in the response'
     assert (
-        response.json()["title"] == menu_patch["title"]
-    ), "The menu title does not match the expected response"
+        response.json()['title'] == menu_patch['title']
+    ), 'The menu title does not match the expected response'
     assert (
-        response.json()["description"] == menu_patch["description"]
-    ), "The menu description does not match the expected response"
+        response.json()['description'] == menu_patch['description']
+    ), 'The menu description does not match the expected response'
 
-    saved_data["menu"] = response.json()
+    saved_data['menu'] = response.json()
 
 
 async def test_update_non_existent_menu(
@@ -135,7 +135,7 @@ async def test_update_non_existent_menu(
     """Проверка на изменение несуществующего меню"""
 
     response: Response = await ac.patch(
-        url=f"/menus/{non_existen_menu_id}",
+        url=f'/menus/{non_existen_menu_id}',
         json=menu_patch,
     )
 
@@ -148,26 +148,26 @@ async def test_get_updated_menu_by_id(
 ) -> None:
     """Проверка получения измененного меню"""
 
-    menu = saved_data["menu"]
+    menu = saved_data['menu']
     response: Response = await ac.get(
         url=f"/menus/{menu['id']}",
     )
-    assert response.status_code == HTTPStatus.OK, "The response status is not 200"
+    assert response.status_code == HTTPStatus.OK, 'The response status is not 200'
     assert (
-        response.json()["id"] == menu["id"]
-    ), "The menu ID does not match the expected response"
+        response.json()['id'] == menu['id']
+    ), 'The menu ID does not match the expected response'
     assert (
-        response.json()["title"] == menu["title"]
-    ), "The menu title does not match the expected response"
+        response.json()['title'] == menu['title']
+    ), 'The menu title does not match the expected response'
     assert (
-        response.json()["description"] == menu["description"]
-    ), "The menu description does not match the expected response"
+        response.json()['description'] == menu['description']
+    ), 'The menu description does not match the expected response'
     assert (
-        response.json()["submenus_count"] == 0
-    ), "The submenu_counts does not match the expected response"
+        response.json()['submenus_count'] == 0
+    ), 'The submenu_counts does not match the expected response'
     assert (
-        response.json()["dishes_count"] == 0
-    ), "The dishes_counts does not match the expected response"
+        response.json()['dishes_count'] == 0
+    ), 'The dishes_counts does not match the expected response'
 
 
 async def test_delete_menu(
@@ -176,14 +176,14 @@ async def test_delete_menu(
 ) -> None:
     """Проверка на удаление меню"""
 
-    menu = saved_data["menu"]
+    menu = saved_data['menu']
     response: Response = await ac.delete(
         url=f"/menus/{menu['id']}",
     )
-    assert response.status_code == HTTPStatus.OK, "The response status is not 200"
+    assert response.status_code == HTTPStatus.OK, 'The response status is not 200'
     assert (
-        response.json()["message"] == "The menu has been deleted"
-    ), "The deletion message does not match the expected response"
+        response.json()['message'] == 'The menu has been deleted'
+    ), 'The deletion message does not match the expected response'
 
 
 async def test_get_deleted_menu(
@@ -192,11 +192,11 @@ async def test_get_deleted_menu(
 ) -> None:
     """Проверка на отсутствие удаленного меню"""
 
-    menu = saved_data["menu"]
+    menu = saved_data['menu']
     response = await ac.get(url=f"/menus/{menu['id']}")
     assert (
         response.status_code == HTTPStatus.NOT_FOUND
-    ), "The response status is not 404"
+    ), 'The response status is not 404'
     assert (
-        response.json()["detail"] == "menu not found"
-    ), "The error message does not match the expected response"
+        response.json()['detail'] == 'menu not found'
+    ), 'The error message does not match the expected response'

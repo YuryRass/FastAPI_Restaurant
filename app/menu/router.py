@@ -66,3 +66,4 @@ async def delete_menu(menu_id: uuid.UUID) -> dict[str, bool | str]:
     menu = await MenuDAO.delete_record(id=menu_id)
     if menu:
         return {'status': True, 'message': 'The menu has been deleted'}
+    return {'status': False, 'message': 'Menu not found'}
