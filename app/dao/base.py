@@ -1,4 +1,4 @@
-"""Основной DAO (Data Access Object)"""
+"""Основной DAO (Data Access Object)."""
 import uuid
 from typing import Generic, TypeVar
 
@@ -15,11 +15,12 @@ ModelType = TypeVar('ModelType', Dish, Menu, Submenu)
 
 
 class BaseDAO(Generic[ModelType]):
-    """Класс, описывающий основные CRUD операции для моделей"""
+    """Класс, описывающий основные CRUD операции для моделей."""
     model: type[ModelType]
 
     @classmethod
     async def add(cls, **data) -> RowMapping:
+        """Добавление записи в модель."""
         assert cls.model is not None
         stmt = insert(cls.model).values(**data).returning(cls.model.id)
         session: AsyncSession
@@ -30,6 +31,7 @@ class BaseDAO(Generic[ModelType]):
 
     @classmethod
     async def update(cls, model_id: uuid.UUID, **data) -> RowMapping:
+        """Изменение записи в модели."""
         assert cls.model is not None
         stmt = (
             update(cls.model)
@@ -45,6 +47,7 @@ class BaseDAO(Generic[ModelType]):
 
     @classmethod
     async def delete_record(cls, **kwargs) -> RowMapping | None:
+        """Удаление записи в модели."""
         assert cls.model is not None
         stmt = delete(cls.model).filter_by(**kwargs).returning(cls.model.id)
 
