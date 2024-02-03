@@ -8,7 +8,7 @@ from sqlalchemy import engine_from_config, pool
 config = context.config
 
 from app.config import settings  # noqa: E402
-from app.database import Base  # noqa: E402
+from app.database.database import Base  # noqa: E402
 from app.dish.model import Dish  # noqa
 from app.menu.model import Menu  # noqa
 from app.submenu.model import Submenu  # noqa

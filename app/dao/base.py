@@ -6,7 +6,7 @@ from sqlalchemy import delete, insert, update
 from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import async_session
+from app.database.database import async_session
 from app.dish.model import Dish
 from app.menu.model import Menu
 from app.submenu.model import Submenu

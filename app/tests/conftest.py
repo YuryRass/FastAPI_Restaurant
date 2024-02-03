@@ -5,7 +5,7 @@ import pytest
 from httpx import AsyncClient
 
 from app.config import settings
-from app.database import Base, async_engine
+from app.database.database import Base, async_engine
 from app.main import app as fastapi_app
 
 
