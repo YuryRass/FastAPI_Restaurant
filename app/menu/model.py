@@ -17,5 +17,5 @@ class Menu(Base):
         cascade='all, delete',
     )
 
-    MENUS_LINK = '/menus'
-    MENU_LINK = '/menus/{menu_id}'
+    LINK = '/menus'
+    LONG_LINK = '/menus/{menu_id}'

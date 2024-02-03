@@ -12,7 +12,7 @@ from app.submenu.dao import SubmenuDAO
 router: APIRouter = APIRouter(tags=['Dishes'])
 
 
-@router.post(Dish.DISHES_LINK)
+@router.post(Dish.LINK)
 async def add_dish(
     menu_id: uuid.UUID,
     submenu_id: uuid.UUID,
@@ -50,7 +50,7 @@ async def add_dish(
     return added_dish
 
 
-@router.get(Dish.DISH_LINK)
+@router.get(Dish.LONG_LINK)
 async def show_dish_by_id(
     menu_id: uuid.UUID,
     submenu_id: uuid.UUID,
@@ -64,14 +64,14 @@ async def show_dish_by_id(
     return dish
 
 
-@router.get(Dish.DISHES_LINK)
+@router.get(Dish.LINK)
 async def show_dishes(menu_id: uuid.UUID, submenu_id: uuid.UUID) -> list[OutSDish]:
     dishes = await DishDAO.show(menu_id, submenu_id)
 
     return dishes
 
 
-@router.patch(Dish.DISH_LINK)
+@router.patch(Dish.LONG_LINK)
 async def update_dish(
     menu_id: uuid.UUID,
     submenu_id: uuid.UUID,
@@ -94,7 +94,7 @@ async def update_dish(
     return new_dish
 
 
-@router.delete(Dish.DISH_LINK)
+@router.delete(Dish.LONG_LINK)
 async def delete_dish(
     menu_id: uuid.UUID,
     submenu_id: uuid.UUID,

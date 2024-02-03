@@ -1,67 +1,47 @@
 import uuid
 
-from fastapi import APIRouter, Response, status
-from sqlalchemy.exc import IntegrityError
+from fastapi import APIRouter, BackgroundTasks, Response
 
-from app.exceptions import MenuNotFoundException, SimilarMenuTitlesException
-from app.menu.dao import MenuDAO
 from app.menu.model import Menu
+from app.menu.service import MenuService
 from app.menu.shemas import OutSMenu, SMenu
 
 router: APIRouter = APIRouter(tags=['Menus'])
 
 
-@router.post(Menu.MENUS_LINK)
-async def add_menu(menu: SMenu, responce: Response) -> OutSMenu:
-    try:
-        menu_res = await MenuDAO.add(
-            title=menu.title,
-            description=menu.description,
-        )
-    except IntegrityError:
-        raise SimilarMenuTitlesException
-
-    responce.status_code = status.HTTP_201_CREATED
-    added_menu = await MenuDAO.show(menu_res['id'])
-    return added_menu
+@router.post(Menu.LINK)
+async def add_menu(
+    menu: SMenu,
+    responce: Response,
+    background_task: BackgroundTasks,
+) -> OutSMenu:
+    return await MenuService.add(menu, responce, background_task)
 
 
-@router.get(Menu.MENUS_LINK)
-async def show_menus() -> list[OutSMenu]:
-    menus = await MenuDAO.show()
-
-    return menus
+@router.get(Menu.LINK)
+async def show_menus(background_task: BackgroundTasks) -> list[OutSMenu]:
+    return await MenuService.show_all(background_task)
 
 
-@router.get(Menu.MENU_LINK)
-async def show_menu_by_id(menu_id: uuid.UUID) -> OutSMenu:
-    menu = await MenuDAO.show(menu_id)
-    if not menu:
-        raise MenuNotFoundException
-
-    return menu
+@router.get(Menu.LONG_LINK)
+async def show_menu_by_id(
+    menu_id: uuid.UUID, background_task: BackgroundTasks
+) -> OutSMenu:
+    return await MenuService.show(menu_id, background_task)
 
 
-@router.patch(Menu.MENU_LINK)
-async def update_menu(menu_id: uuid.UUID, new_data: SMenu) -> OutSMenu:
-    menu = await MenuDAO.show(menu_id)
-    if not menu:
-        raise MenuNotFoundException
-
-    updated_menu = await MenuDAO.update(
-        menu_id,
-        title=new_data.title,
-        description=new_data.description,
-    )
-
-    menu_res = await MenuDAO.show(updated_menu['id'])
-
-    return menu_res
+@router.patch(Menu.LONG_LINK)
+async def update_menu(
+    menu_id: uuid.UUID,
+    new_data: SMenu,
+    background_task: BackgroundTasks,
+) -> OutSMenu:
+    return await MenuService.update(menu_id, new_data, background_task)
 
 
-@router.delete(Menu.MENU_LINK)
-async def delete_menu(menu_id: uuid.UUID) -> dict[str, bool | str]:
-    menu = await MenuDAO.delete_record(id=menu_id)
-    if menu:
-        return {'status': True, 'message': 'The menu has been deleted'}
-    return {'status': False, 'message': 'Menu not found'}
+@router.delete(Menu.LONG_LINK)
+async def delete_menu(
+    menu_id: uuid.UUID,
+    background_task: BackgroundTasks,
+) -> dict[str, bool | str]:
+    return await MenuService.delete(menu_id, background_task)

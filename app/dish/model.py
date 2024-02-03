@@ -23,5 +23,5 @@ class Dish(Base):
 
     submenu: Mapped['Submenu'] = relationship(back_populates='dishes')
 
-    DISHES_LINK = '/menus/{menu_id}/submenus/{submenu_id}/dishes'
-    DISH_LINK = '/menus/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}'
+    LINK = '/menus/{menu_id}/submenus/{submenu_id}/dishes'
+    LONG_LINK = '/menus/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}'

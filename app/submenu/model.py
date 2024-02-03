@@ -26,5 +26,5 @@ class Submenu(Base):
         cascade='all, delete',
     )
 
-    SUBMENUS_LINK = '/menus/{menu_id}/submenus'
-    SUBMENU_LINK = '/menus/{menu_id}/submenus/{submenu_id}'
+    LINK = '/menus/{menu_id}/submenus'
+    LONG_LINK = '/menus/{menu_id}/submenus/{submenu_id}'

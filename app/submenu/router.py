@@ -11,7 +11,7 @@ from app.submenu.shemas import OutSSubMenu, SSubMenu
 router: APIRouter = APIRouter(tags=['Submenus'])
 
 
-@router.post(Submenu.SUBMENUS_LINK)
+@router.post(Submenu.LINK)
 async def add_submenu(
     menu_id: uuid.UUID, menu: SSubMenu, responce: Response
 ) -> OutSSubMenu:
@@ -28,7 +28,7 @@ async def add_submenu(
     return added_submenu
 
 
-@router.get(Submenu.SUBMENU_LINK)
+@router.get(Submenu.LONG_LINK)
 async def show_submenu_by_id(menu_id: uuid.UUID, submenu_id: uuid.UUID) -> OutSSubMenu:
     submenu = await SubmenuDAO.show(menu_id, submenu_id)
     if not submenu:
@@ -37,14 +37,14 @@ async def show_submenu_by_id(menu_id: uuid.UUID, submenu_id: uuid.UUID) -> OutSS
     return submenu
 
 
-@router.get(Submenu.SUBMENUS_LINK)
+@router.get(Submenu.LINK)
 async def show_submenus(menu_id: uuid.UUID) -> list[OutSSubMenu] | OutSSubMenu:
     sub_menus = await SubmenuDAO.show(menu_id)
 
     return sub_menus
 
 
-@router.patch(Submenu.SUBMENU_LINK)
+@router.patch(Submenu.LONG_LINK)
 async def update_submenu(
     menu_id: uuid.UUID,
     submenu_id: uuid.UUID,
@@ -65,7 +65,7 @@ async def update_submenu(
     return submenu_res
 
 
-@router.delete(Submenu.SUBMENU_LINK)
+@router.delete(Submenu.LONG_LINK)
 async def delete_submenu(
     menu_id: uuid.UUID, submenu_id: uuid.UUID
 ) -> dict[str, bool | str]:
