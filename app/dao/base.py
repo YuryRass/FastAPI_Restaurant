@@ -47,7 +47,7 @@ class BaseDAO(Generic[ModelType]):
 
     @classmethod
     async def delete_record(cls, **kwargs) -> RowMapping | None:
-        """Удаление записи в модели."""
+        """Удаление записи из модели."""
         assert cls.model is not None
         stmt = delete(cls.model).filter_by(**kwargs).returning(cls.model.id)
 

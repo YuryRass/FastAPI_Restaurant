@@ -13,6 +13,7 @@ from app.submenu.model import Submenu
 
 
 class MenuDAO(BaseDAO):
+    """CRUD операции для меню."""
     model = Menu
     menu_alias = aliased(Menu)
     submenu_alias = aliased(Submenu)

@@ -9,8 +9,7 @@ async def test_add_menu(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка добавления нового меню"""
-
+    """Проверка добавления нового меню."""
     response: Response = await ac.post(
         url='/menus',
         json=menu_post,
@@ -40,8 +39,7 @@ async def test_add_submenu(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на добавление нового подменю"""
-
+    """Проверка на добавление нового подменю."""
     menu = saved_data['menu']
     response: Response = await ac.post(
         url=f"/menus/{menu['id']}/submenus",
@@ -70,8 +68,7 @@ async def test_add_first_dish(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на добавление первого блюда"""
-
+    """Проверка на добавление первого блюда."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = await ac.post(
@@ -102,8 +99,7 @@ async def test_add_second_dish(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на добавление второго блюда"""
-
+    """Проверка на добавление второго блюда."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = await ac.post(
@@ -133,8 +129,7 @@ async def test_get_menu_by_id(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка получения меню по его ID"""
-
+    """Проверка получения меню по его ID."""
     menu = saved_data['menu']
     response: Response = await ac.get(url=f"/menus/{menu['id']}")
     assert response.status_code == HTTPStatus.OK, 'The response status is not 200'
@@ -159,8 +154,7 @@ async def test_get_submenu_by_id(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Получение созданного подменю по его ID"""
-
+    """Получение созданного подменю по его ID."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response: Response = await ac.get(
@@ -185,8 +179,7 @@ async def test_delete_submenu(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на удаление созданного подменю"""
-
+    """Проверка на удаление созданного подменю."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response: Response = await ac.delete(
@@ -202,8 +195,7 @@ async def test_submenu_empty(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка получения пустого списка подменю"""
-
+    """Проверка получения пустого списка подменю."""
     menu = saved_data['menu']
     response: Response = await ac.get(url=f"/menus/{menu['id']}/submenus")
     assert response.status_code == HTTPStatus.OK, 'The response status is not 200'
@@ -214,8 +206,7 @@ async def test_dish_empty(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка получения пустого списка блюд"""
-
+    """Проверка получения пустого списка блюд."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = await ac.get(url=f"/menus/{menu['id']}/submenus/{submenu['id']}/dishes")
@@ -227,8 +218,7 @@ async def test_get_menu_by_id_not_empty(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка получения меню по его ID"""
-
+    """Проверка получения меню по его ID."""
     menu = saved_data['menu']
     response: Response = await ac.get(url=f"/menus/{menu['id']}")
     assert response.status_code == HTTPStatus.OK, 'The response status is not 200'
@@ -253,8 +243,7 @@ async def test_delete_menu(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на удаление меню"""
-
+    """Проверка на удаление меню."""
     menu = saved_data['menu']
     response: Response = await ac.delete(
         url=f"/menus/{menu['id']}",
@@ -266,8 +255,7 @@ async def test_delete_menu(
 
 
 async def test_menus_is_empty(ac: AsyncClient) -> None:
-    """Проверка на пустое меню"""
-
+    """Проверка на пустое меню."""
     response: Response = await ac.get(
         url='/menus',
     )

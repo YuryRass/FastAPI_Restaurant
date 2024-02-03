@@ -10,6 +10,7 @@ from app.menu.shemas import OutSMenu, SMenu
 
 
 class MenuService:
+    """Сервисный слой для меню."""
     @classmethod
     async def add(
         cls,
@@ -17,6 +18,7 @@ class MenuService:
         responce: Response,
         background_task: BackgroundTasks,
     ) -> OutSMenu:
+        """Добавление меню."""
         try:
             menu_res = await MenuDAO.add(
                 title=menu.title,
@@ -36,6 +38,7 @@ class MenuService:
 
     @classmethod
     async def show_all(cls, background_task: BackgroundTasks) -> list[OutSMenu]:
+        """Отображение списка всех меню."""
         res = await RedisMenuDAO.get_all()
         if res is not None:
             return res
@@ -50,6 +53,7 @@ class MenuService:
         menu_id: uuid.UUID,
         background_task: BackgroundTasks,
     ) -> OutSMenu:
+        """Отображение меню."""
         res = await RedisMenuDAO.get(menu_id=menu_id)
         if res is not None:
             return res
@@ -67,6 +71,7 @@ class MenuService:
         new_data: SMenu,
         background_task: BackgroundTasks,
     ) -> OutSMenu:
+        """Изменение меню."""
         menu = await RedisMenuDAO.get(menu_id=menu_id)
         if menu is None:
             menu = await MenuDAO.show(menu_id)
@@ -93,6 +98,7 @@ class MenuService:
         menu_id: uuid.UUID,
         background_task: BackgroundTasks,
     ) -> dict[str, bool | str]:
+        """Удаление меню."""
         menu = await MenuDAO.delete_record(id=menu_id)
         if menu:
             background_task.add_task(RedisMenuDAO.delete, menu_id=menu_id)

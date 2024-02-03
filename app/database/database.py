@@ -21,6 +21,7 @@ async_session: async_sessionmaker = async_sessionmaker(
 
 
 class Base(DeclarativeBase):
+    """Базовый класс для декларативных определений классов."""
     __abstract__ = True
 
     @declared_attr.directive

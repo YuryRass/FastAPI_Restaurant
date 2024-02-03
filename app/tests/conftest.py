@@ -24,7 +24,6 @@ def event_loop(request):
 @pytest.fixture(scope='session', autouse=True)
 async def prepare_database():
     """Создание тестовой базы данных"""
-
     assert settings.MODE == 'TEST'
 
     async with async_engine.begin() as conn:
@@ -35,7 +34,6 @@ async def prepare_database():
 @pytest.fixture(scope='function')
 async def ac():
     """Асинхронный HTTP клиент"""
-
     async with AsyncClient(
         app=fastapi_app,
         base_url='http://test/api/v1',

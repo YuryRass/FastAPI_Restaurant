@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import and_, select
+from sqlalchemy import Select, and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 
@@ -13,6 +13,8 @@ from app.submenu.model import Submenu
 class DishDAO(BaseDAO):
     """CRUD операции для блюда."""
     model = Dish
+    dish_alias = aliased(Dish)
+    submenu_alias = aliased(Submenu)
 
     @classmethod
     async def show(
@@ -41,29 +43,10 @@ class DishDAO(BaseDAO):
         dish_id: uuid.UUID | None = None,
     ) -> Dish:
         """Составление и исполнение запроса о выводе блюда."""
-        dish_alias = aliased(Dish)
-        submenu_alias = aliased(Submenu)
-        stmt = (
-            select(
-                dish_alias.id,
-                dish_alias.title,
-                dish_alias.description,
-                dish_alias.price,
-            )
-            .select_from(dish_alias)
-            .where(
-                and_(
-                    submenu_alias.menu_id == menu_id,
-                    dish_alias.submenu_id == submenu_id,
-                )
-            )
-            .join(
-                submenu_alias, submenu_alias.id == dish_alias.submenu_id, isouter=True
-            )
-        )
+        stmt = cls.__get_dish_info_query(menu_id, submenu_id)
 
         if dish_id:
-            stmt = stmt.where(dish_alias.id == dish_id)
+            stmt = stmt.where(cls.dish_alias.id == dish_id)
 
         result = await session.execute(stmt)
         await session.commit()
@@ -71,3 +54,31 @@ class DishDAO(BaseDAO):
             return result.mappings().all()
         else:
             return result.mappings().one_or_none()
+
+    @classmethod
+    def __get_dish_info_query(
+        cls,
+        menu_id: uuid.UUID,
+        submenu_id: uuid.UUID,
+    ) -> Select[tuple[uuid.UUID, str, str | None, float]]:
+        """Получение запроса о выводе блюда."""
+        return (
+            select(
+                cls.dish_alias.id,
+                cls.dish_alias.title,
+                cls.dish_alias.description,
+                cls.dish_alias.price,
+            )
+            .select_from(cls.dish_alias)
+            .where(
+                and_(
+                    cls.submenu_alias.menu_id == menu_id,
+                    cls.dish_alias.submenu_id == submenu_id,
+                )
+            )
+            .join(
+                cls.submenu_alias,
+                cls.submenu_alias.id == cls.dish_alias.submenu_id,
+                isouter=True,
+            )
+        )

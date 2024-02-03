@@ -9,8 +9,7 @@ async def test_add_menu(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка добавления нового меню"""
-
+    """Проверка добавления нового меню."""
     response: Response = await ac.post(
         url='/menus',
         json=menu_post,
@@ -39,7 +38,7 @@ async def test_submenu_empty(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка получения пустого списка подменю"""
+    """Проверка получения пустого списка подменю."""
     menu = saved_data['menu']
     response: Response = await ac.get(url=f"/menus/{menu['id']}/submenus")
     assert response.status_code == HTTPStatus.OK, 'The response status is not 200'
@@ -51,8 +50,7 @@ async def test_add_submenu(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на добавление нового подменю"""
-
+    """Проверка на добавление нового подменю."""
     menu = saved_data['menu']
     response: Response = await ac.post(
         url=f"/menus/{menu['id']}/submenus",
@@ -81,8 +79,7 @@ async def test_add_submenu_similar(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на добавление нового подменю с одинаковым названием"""
-
+    """Проверка на добавление нового подменю с одинаковым названием."""
     menu = saved_data['menu']
     response: Response = await ac.post(
         url=f"/menus/{menu['id']}/submenus",
@@ -97,8 +94,7 @@ async def test_submenus_not_empty(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на получение непустого списка подменю"""
-
+    """Проверка на получение непустого списка подменю."""
     menu = saved_data['menu']
     response: Response = await ac.get(url=f"/menus/{menu['id']}/submenus")
     assert response.status_code == HTTPStatus.OK, 'The response status is not 200'
@@ -109,8 +105,7 @@ async def test_get_submenu_by_id(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Получение созданного подменю по его ID"""
-
+    """Получение созданного подменю по его ID."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response: Response = await ac.get(
@@ -136,8 +131,7 @@ async def test_update_submenu(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на изменение текущего подменю"""
-
+    """Проверка на изменение текущего подменю."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response: Response = await ac.patch(
@@ -160,8 +154,7 @@ async def test_get_updated_submenu_by_id(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на получение измененного подменю"""
-
+    """Проверка на получение измененного подменю."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response: Response = await ac.get(
@@ -186,8 +179,7 @@ async def test_delete_submenu(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на удаление текущего подменю"""
-
+    """Проверка на удаление текущего подменю."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response: Response = await ac.delete(
@@ -203,8 +195,7 @@ async def test_submenu_empty_after_delete(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на получение пустого списка подменю после удаления"""
-
+    """Проверка на получение пустого списка подменю после удаления."""
     menu = saved_data['menu']
     response = await ac.get(
         url=f"/menus/{menu['id']}/submenus",
@@ -217,8 +208,7 @@ async def test_get_deleted_submenu(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на отсутствие удаленного подменю"""
-
+    """Проверка на отсутствие удаленного подменю."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = await ac.get(
@@ -236,8 +226,7 @@ async def test_delete_menu(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на удаление текущего меню"""
-
+    """Проверка на удаление текущего меню."""
     menu = saved_data['menu']
     response: Response = await ac.delete(
         url=f"/menus/{menu['id']}",
@@ -252,8 +241,7 @@ async def test_get_menu_after_delete(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на отсутствие удаленного меню"""
-
+    """Проверка на отсутствие удаленного меню."""
     menu = saved_data['menu']
     response = await ac.get(url=f"/menus/{menu['id']}")
     assert (
@@ -272,7 +260,7 @@ async def test_post_for_cascade_deletion(
 ) -> None:
     """
     Добавление нового меню и подменю
-    для последующей проверки каскадного удаления
+    для последующей проверки каскадного удаления.
     """
 
     # Добавление нового меню
@@ -300,7 +288,7 @@ async def test_cascade_delete_menu(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Каскадное удаление меню"""
+    """Каскадное удаление меню."""
 
     menu = saved_data['menu']
     response = await ac.delete(url=f"/menus/{menu['id']}")
@@ -314,7 +302,7 @@ async def test_get_submenu_after_cascade_deletion(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка отсутствия подменю после каскадного удаления меню"""
+    """Проверка отсутствия подменю после каскадного удаления меню."""
 
     menu = saved_data['menu']
     submenu = saved_data['submenu']

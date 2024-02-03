@@ -9,8 +9,7 @@ async def test_add_menu(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка добавления нового меню"""
-
+    """Проверка добавления нового меню."""
     response: Response = await ac.post(
         url='/menus',
         json=menu_post,
@@ -40,8 +39,7 @@ async def test_add_submenu(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на добавление нового подменю"""
-
+    """Проверка на добавление нового подменю."""
     menu = saved_data['menu']
     response: Response = await ac.post(
         url=f"/menus/{menu['id']}/submenus",
@@ -69,8 +67,7 @@ async def test_dish_empty(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка получения пустого списка блюд"""
-
+    """Проверка получения пустого списка блюд."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = await ac.get(url=f"/menus/{menu['id']}/submenus/{submenu['id']}/dishes")
@@ -83,8 +80,7 @@ async def test_add_dish(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на добавление нового блюда"""
-
+    """Проверка на добавление нового блюда."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = await ac.post(
@@ -115,8 +111,7 @@ async def test_add_dish_similar(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на добавление нового блюда с одинаковым названием"""
-
+    """Проверка на добавление нового блюда с одинаковым названием."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = await ac.post(
@@ -132,8 +127,7 @@ async def test_dish_not_empty(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на получение непустого списка блюд"""
-
+    """Проверка на получение непустого списка блюд."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = await ac.get(
@@ -147,8 +141,7 @@ async def test_get_posted_dish(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на получение созданного блюда"""
-
+    """Проверка на получение созданного блюда."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     dish = saved_data['dish']
@@ -175,8 +168,7 @@ async def test_update_dish(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на изменение текущего блюда"""
-
+    """Проверка на изменение текущего блюда."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     dish = saved_data['dish']
@@ -207,8 +199,7 @@ async def test_get_updated_dish(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на получение обновленного блюда"""
-
+    """Проверка на получение обновленного блюда."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     dish = saved_data['dish']
@@ -234,8 +225,7 @@ async def test_delete_dish(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на удаление текущего блюда"""
-
+    """Проверка на удаление текущего блюда."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     dish = saved_data['dish']
@@ -252,8 +242,7 @@ async def test_dish_empty_after_delete(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка получения пустого списка блюд после удаления"""
-
+    """Проверка получения пустого списка блюд после удаления."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = await ac.get(
@@ -267,8 +256,7 @@ async def test_get_deleted_dish(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на получение удаленного блюда"""
-
+    """Проверка на получение удаленного блюда."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     dish = saved_data['dish']
@@ -287,8 +275,7 @@ async def test_delete_submenu(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на удаление текущего подменю"""
-
+    """Проверка на удаление текущего подменю."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = await ac.delete(
@@ -304,8 +291,7 @@ async def test_deleted_submenu_dish_empty(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Проверка на получение пустого списка блюд у несуществующего подменю"""
-
+    """Проверка на получение пустого списка блюд у несуществующего подменю."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = await ac.get(
@@ -321,8 +307,7 @@ async def test_post_for_cascade_deletion(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Добавление нового подменю и блюда для проверки каскадного удаления"""
-
+    """Добавление нового подменю и блюда для проверки каскадного удаления."""
     menu = saved_data['menu']
     response = await ac.post(
         url=f"/menus/{menu['id']}/submenus",
@@ -346,8 +331,7 @@ async def test_delete_submenu_for_cascade_check(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Удаление текущего подменю для проверки каскадного удаления"""
-
+    """Удаление текущего подменю для проверки каскадного удаления."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = await ac.delete(url=f"/menus/{menu['id']}/submenus/{submenu['id']}")
@@ -361,8 +345,7 @@ async def test_get_deleted_dish_cascade_check(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Получение удаленного блюда (проверка каскадного удаления)"""
-
+    """Получение удаленного блюда (проверка каскадного удаления)."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     dish = saved_data['dish']
@@ -381,8 +364,7 @@ async def test_delete_menu_finally(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
-    """Удаление текущего меню"""
-
+    """Удаление текущего меню."""
     menu = saved_data['menu']
     response = await ac.delete(url=f"/menus/{menu['id']}")
     assert response.status_code == HTTPStatus.OK, 'The response status is not 200'

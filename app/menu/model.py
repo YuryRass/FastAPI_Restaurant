@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 
 
 class Menu(Base):
+    """Таблица, описывающая различные меню ресторана."""
     title: Mapped[str] = mapped_column(unique=True)
     description: Mapped[str | None]
 

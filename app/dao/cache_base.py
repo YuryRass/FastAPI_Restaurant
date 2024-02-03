@@ -12,7 +12,7 @@ ModelType = TypeVar('ModelType', Dish, Menu, Submenu)
 
 
 class RedisBaseDAO(Generic[ModelType]):
-    """Класс, описывающий основные CRUD операции для Redis."""
+    """Основные CRUD операции для Redis."""
 
     model: type[ModelType]
     cacher: Redis = redis_cacher

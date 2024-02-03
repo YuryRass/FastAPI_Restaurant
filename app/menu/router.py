@@ -15,11 +15,26 @@ async def add_menu(
     responce: Response,
     background_task: BackgroundTasks,
 ) -> OutSMenu:
+    """
+    **Добавление меню.**
+
+    Args:
+    - **menu (SMenu)**: данные о меню
+
+    Returns:
+    - **OutSMenu**: добавленные данные о меню
+    """
     return await MenuService.add(menu, responce, background_task)
 
 
 @router.get(Menu.LINK)
 async def show_menus(background_task: BackgroundTasks) -> list[OutSMenu]:
+    """
+    **Получение списка всех меню.**
+
+    Returns:
+    - **list[OutSMenu]**: список всех меню
+    """
     return await MenuService.show_all(background_task)
 
 
@@ -27,6 +42,15 @@ async def show_menus(background_task: BackgroundTasks) -> list[OutSMenu]:
 async def show_menu_by_id(
     menu_id: uuid.UUID, background_task: BackgroundTasks
 ) -> OutSMenu:
+    """
+    **Получние меню по его ID.**
+
+    Args:
+    - **menu_id (uuid.UUID)**: ID меню
+
+    Returns:
+    - **OutSMenu**: найденное меню
+    """
     return await MenuService.show(menu_id, background_task)
 
 
@@ -36,6 +60,16 @@ async def update_menu(
     new_data: SMenu,
     background_task: BackgroundTasks,
 ) -> OutSMenu:
+    """
+    **Изменение данных о меню.**
+
+    Args:
+    - **menu_id (uuid.UUID)**: ID меню
+    - **new_data (SMenu)**: новые данные о меню
+
+    Returns:
+    - **OutSMenu**: измененное меню
+    """
     return await MenuService.update(menu_id, new_data, background_task)
 
 
@@ -44,4 +78,10 @@ async def delete_menu(
     menu_id: uuid.UUID,
     background_task: BackgroundTasks,
 ) -> dict[str, bool | str]:
+    """
+    **Удаление меню.**
+
+    Args:
+    - **menu_id (uuid.UUID)**: ID меню
+    """
     return await MenuService.delete(menu_id, background_task)
