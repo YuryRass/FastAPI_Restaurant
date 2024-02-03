@@ -4,7 +4,6 @@ from fastapi import BackgroundTasks, Response, status
 from sqlalchemy.exc import IntegrityError
 
 from app.exceptions import SimilarSubmenuTitlesException, SubMenuNotFoundException
-from app.menu.cache_dao import RedisMenuDAO
 from app.submenu.cache_dao import RedisSubmenuDAO
 from app.submenu.dao import SubmenuDAO
 from app.submenu.shemas import OutSSubMenu, SSubMenu
@@ -35,10 +34,7 @@ class SubmenuService:
             menu_id=menu_id,
             submenu_id=added_submenu['id'],
         )
-        background_task.add_task(
-            RedisMenuDAO.delete,
-            menu_id=menu_id,
-        )
+
         return added_submenu
 
     @classmethod
@@ -109,10 +105,6 @@ class SubmenuService:
             menu_id=menu_id,
             submenu_id=submenu_res['id'],
         )
-        background_task.add_task(
-            RedisMenuDAO.delete,
-            menu_id=menu_id,
-        )
         return submenu_res
 
     @classmethod
@@ -129,6 +121,6 @@ class SubmenuService:
                 menu_id=menu_id,
                 submenu_id=submenu_id,
             )
-            background_task.add_task(RedisMenuDAO.delete, menu_id=menu_id)
+
             return {'status': True, 'message': 'The submenu has been deleted'}
         return {'status': False, 'message': 'Submenu not found'}

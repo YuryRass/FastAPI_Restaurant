@@ -60,15 +60,15 @@ class RedisBaseDAO(Generic[ModelType]):
         return None
 
     @classmethod
-    async def delete(cls, **kwargs: Any) -> None:
+    async def _delete(cls, **kwargs: Any) -> None:
         """Удаление всех связанных записей модели из кеша."""
         await cls.cacher.delete(cls.model.LINK.format(**kwargs))
         await cls.delete_by_pattern(cls.model.LONG_LINK.format(**kwargs))
 
     @classmethod
-    async def create_update(cls, item: ModelType, **kwargs: Any) -> None:
+    async def _create_update(cls, item: ModelType, **kwargs: Any) -> None:
         """Создание/изменение новой модели в кеше."""
-        await cls.delete(**kwargs)
+        await cls._delete(**kwargs)
 
         await cls.cacher.set(
             cls.model.LONG_LINK.format(**kwargs),
