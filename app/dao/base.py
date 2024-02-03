@@ -1,17 +1,13 @@
 """Основной DAO (Data Access Object)."""
 import uuid
-from typing import Generic, TypeVar
+from typing import Generic
 
 from sqlalchemy import delete, insert, update
 from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.dao import ModelType
 from app.database.database import async_session
-from app.dish.model import Dish
-from app.menu.model import Menu
-from app.submenu.model import Submenu
-
-ModelType = TypeVar('ModelType', Dish, Menu, Submenu)
 
 
 class BaseDAO(Generic[ModelType]):

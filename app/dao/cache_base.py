@@ -1,14 +1,10 @@
 import pickle
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic
 
 from aioredis import Redis
 
+from app.dao import ModelType
 from app.database.redis import redis_cacher
-from app.dish.model import Dish
-from app.menu.model import Menu
-from app.submenu.model import Submenu
-
-ModelType = TypeVar('ModelType', Dish, Menu, Submenu)
 
 
 class RedisBaseDAO(Generic[ModelType]):
