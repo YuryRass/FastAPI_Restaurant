@@ -5,15 +5,13 @@ from sqlalchemy.exc import IntegrityError
 
 from app.exceptions import SimilarSubmenuTitlesException, SubMenuNotFoundException
 from app.submenu.dao import SubmenuDAO
+from app.submenu.model import Submenu
 from app.submenu.shemas import OutSSubMenu, SSubMenu
 
-router: APIRouter = APIRouter(
-    prefix='/menus',
-    tags=['Submenus'],
-)
+router: APIRouter = APIRouter(tags=['Submenus'])
 
 
-@router.post('/{menu_id}/submenus')
+@router.post(Submenu.SUBMENUS_LINK)
 async def add_submenu(
     menu_id: uuid.UUID, menu: SSubMenu, responce: Response
 ) -> OutSSubMenu:
@@ -30,7 +28,7 @@ async def add_submenu(
     return added_submenu
 
 
-@router.get('/{menu_id}/submenus/{submenu_id}')
+@router.get(Submenu.SUBMENU_LINK)
 async def show_submenu_by_id(menu_id: uuid.UUID, submenu_id: uuid.UUID) -> OutSSubMenu:
     submenu = await SubmenuDAO.show(menu_id, submenu_id)
     if not submenu:
@@ -39,14 +37,14 @@ async def show_submenu_by_id(menu_id: uuid.UUID, submenu_id: uuid.UUID) -> OutSS
     return submenu
 
 
-@router.get('/{menu_id}/submenus')
+@router.get(Submenu.SUBMENUS_LINK)
 async def show_submenus(menu_id: uuid.UUID) -> list[OutSSubMenu] | OutSSubMenu:
     sub_menus = await SubmenuDAO.show(menu_id)
 
     return sub_menus
 
 
-@router.patch('/{menu_id}/submenus/{submenu_id}')
+@router.patch(Submenu.SUBMENU_LINK)
 async def update_submenu(
     menu_id: uuid.UUID,
     submenu_id: uuid.UUID,
@@ -67,7 +65,7 @@ async def update_submenu(
     return submenu_res
 
 
-@router.delete('/{menu_id}/submenus/{submenu_id}')
+@router.delete(Submenu.SUBMENU_LINK)
 async def delete_submenu(
     menu_id: uuid.UUID, submenu_id: uuid.UUID
 ) -> dict[str, bool | str]:

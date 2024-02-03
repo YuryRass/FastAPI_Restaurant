@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 
 
 class Dish(Base):
+    """Таблица, описывающая блюда ресторана."""
     title: Mapped[str] = mapped_column(unique=True)
     description: Mapped[str | None]
     price: Mapped[float]
@@ -21,3 +22,6 @@ class Dish(Base):
     )
 
     submenu: Mapped['Submenu'] = relationship(back_populates='dishes')
+
+    DISHES_LINK = '/menus/{menu_id}/submenus/{submenu_id}/dishes'
+    DISH_LINK = '/menus/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}'

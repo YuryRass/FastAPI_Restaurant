@@ -25,3 +25,6 @@ class Submenu(Base):
         back_populates='submenu',
         cascade='all, delete',
     )
+
+    SUBMENUS_LINK = '/menus/{menu_id}/submenus'
+    SUBMENU_LINK = '/menus/{menu_id}/submenus/{submenu_id}'

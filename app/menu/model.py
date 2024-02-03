@@ -16,3 +16,6 @@ class Menu(Base):
         back_populates='menu',
         cascade='all, delete',
     )
+
+    MENUS_LINK = '/menus'
+    MENU_LINK = '/menus/{menu_id}'

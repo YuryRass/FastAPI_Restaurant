@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    """Настройка приложения"""
+    """Настройка приложения."""
 
     MODE: Literal['DEV', 'TEST']
 
