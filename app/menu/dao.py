@@ -46,7 +46,8 @@ class MenuDAO(BaseDAO):
         menu_id: uuid.UUID,
     ) -> Menu:
         """Получение информации о конкретном меню."""
-        menus_query = cls.__get_menus_query().having(cls.menu_alias.id == menu_id)
+        menus_query = cls.__get_menus_query()
+        menus_query = menus_query.having(cls.menu_alias.id == menu_id)
         menus = await session.execute(menus_query)
         res = menus.mappings().all()
         if res:
