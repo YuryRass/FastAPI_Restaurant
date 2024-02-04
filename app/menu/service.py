@@ -32,7 +32,7 @@ class MenuService:
         background_task.add_task(
             RedisMenuDAO.create_update,
             added_menu,
-            menu_id=added_menu.id,
+            menu_id=added_menu['id'],
         )
         return added_menu
 

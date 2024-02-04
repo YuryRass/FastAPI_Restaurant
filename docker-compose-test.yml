@@ -38,9 +38,30 @@ services:
     networks:
       - my_network_pytest
 
+  redis:
+    image: redis:latest
+    container_name: test_redis
+    networks:
+      - my_network_pytest
+    volumes:
+      - test_redis_data:/data
+    expose:
+      - 6379
+    ports:
+      - 5555:6379
+    env_file:
+      - .env_test
+    healthcheck:
+      test: redis-cli ping | grep PONG
+      interval: 1s
+      timeout: 3s
+      retries: 5
+
 networks:
   my_network_pytest:
     name: my_network_pytest
 volumes:
   psql_pytest_network:
     name: psql_pytest_network
+  test_redis_data:
+    name: test_redis_data
