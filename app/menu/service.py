@@ -15,7 +15,7 @@ class MenuService:
     async def add(
         cls,
         menu: SMenu,
-        responce: Response,
+        response: Response,
         background_task: BackgroundTasks,
     ) -> OutSMenu:
         """Добавление меню."""
@@ -27,7 +27,7 @@ class MenuService:
         except IntegrityError:
             raise SimilarMenuTitlesException
 
-        responce.status_code = status.HTTP_201_CREATED
+        response.status_code = status.HTTP_201_CREATED
         added_menu = await MenuDAO.show(menu_res['id'])
         background_task.add_task(
             RedisMenuDAO.create_update,

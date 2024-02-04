@@ -17,7 +17,7 @@ class SubmenuService:
         cls,
         menu_id: uuid.UUID,
         submenu: SSubMenu,
-        responce: Response,
+        response: Response,
         background_task: BackgroundTasks,
     ) -> OutSSubMenu:
         """Добавление подменю."""
@@ -31,7 +31,7 @@ class SubmenuService:
                 )
         except IntegrityError:
             raise SimilarSubmenuTitlesException
-        responce.status_code = status.HTTP_201_CREATED
+        response.status_code = status.HTTP_201_CREATED
         added_submenu = await SubmenuDAO.show(menu_id, submenu['id'])
         background_task.add_task(
             RedisSubmenuDAO.create_update,

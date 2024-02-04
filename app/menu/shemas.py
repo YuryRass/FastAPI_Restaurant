@@ -1,16 +1,16 @@
-from pydantic import UUID4, BaseModel
+from pydantic import UUID4, BaseModel, Field
 
 
 class SMenu(BaseModel):
-    """Схема меню."""
-    title: str
-    description: str
+    """Схема меню для создания."""
+    title: str = Field(..., description='Название меню', example='Специальное меню')
+    description: str = Field(..., description='Описание меню', example='Это меню предлагает разнообразные блюда')
 
 
 class OutSMenu(BaseModel):
     """Схема меню для вывода."""
-    id: UUID4
-    title: str
-    description: str
-    submenus_count: int
-    dishes_count: int
+    id: UUID4 = Field(..., description='Уникальный идентификатор меню', example='52777d1c-04b3-4a5a-9f1f-43e212ed0c2a')
+    title: str = Field(..., description='Название меню', example='Специальное меню')
+    description: str = Field(..., description='Описание меню', example='Это меню предлагает разнообразные блюда')
+    submenus_count: int = Field(..., description='Количество подменю в меню', example=2)
+    dishes_count: int = Field(..., description='Количество блюд в меню', example=15)

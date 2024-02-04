@@ -18,7 +18,7 @@ class DishService:
         menu_id: uuid.UUID,
         submenu_id: uuid.UUID,
         dish: SDish,
-        responce: Response,
+        response: Response,
         background_task: BackgroundTasks,
     ) -> OutSDish:
         """Добавление блюда."""
@@ -33,7 +33,7 @@ class DishService:
                 )
         except IntegrityError:
             raise SimilarDishTitlesException
-        responce.status_code = status.HTTP_201_CREATED
+        response.status_code = status.HTTP_201_CREATED
         added_dish = await DishDAO.show(menu_id, submenu_id, new_dish['id'])
         background_task.add_task(
             RedisDishDAO.create_update,
