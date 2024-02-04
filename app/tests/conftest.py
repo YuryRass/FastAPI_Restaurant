@@ -36,7 +36,7 @@ async def ac():
     """Асинхронный HTTP клиент"""
     async with AsyncClient(
         app=fastapi_app,
-        base_url='http://test/api/v1',
+        base_url='http://test',
     ) as ac:
         yield ac
 

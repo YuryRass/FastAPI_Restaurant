@@ -3,6 +3,16 @@ from typing import Any
 
 from httpx import AsyncClient, Response
 
+from app.dish.router import add_dish, show_dishes
+from app.menu.router import add_menu, delete_menu, show_menu_by_id, show_menus
+from app.submenu.router import (
+    add_submenu,
+    delete_submenu,
+    show_submenu_by_id,
+    show_submenus,
+)
+from app.tests.utils import reverse
+
 
 async def test_add_menu(
     menu_post: dict[str, str],
@@ -11,7 +21,7 @@ async def test_add_menu(
 ) -> None:
     """Проверка добавления нового меню."""
     response: Response = await ac.post(
-        url='/menus',
+        url=reverse(add_menu),
         json=menu_post,
     )
     assert response.status_code == HTTPStatus.CREATED, 'The response status is not 201'
@@ -42,7 +52,7 @@ async def test_add_submenu(
     """Проверка на добавление нового подменю."""
     menu = saved_data['menu']
     response: Response = await ac.post(
-        url=f"/menus/{menu['id']}/submenus",
+        url=reverse(add_submenu, menu_id=menu['id']),
         json=submenu_post,
     )
     assert response.status_code == HTTPStatus.CREATED, 'The response status is not 201'
@@ -72,7 +82,7 @@ async def test_add_first_dish(
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = await ac.post(
-        url=f"/menus/{menu['id']}/submenus/{submenu['id']}/dishes",
+        url=reverse(add_dish, menu_id=menu['id'], submenu_id=submenu['id']),
         json=dish_post,
     )
     assert response.status_code == HTTPStatus.CREATED, 'The response status is not 201'
@@ -103,7 +113,7 @@ async def test_add_second_dish(
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response = await ac.post(
-        url=f"/menus/{menu['id']}/submenus/{submenu['id']}/dishes",
+        url=reverse(add_dish, menu_id=menu['id'], submenu_id=submenu['id']),
         json=dish_2_post,
     )
     assert response.status_code == HTTPStatus.CREATED, 'The response status is not 201'
@@ -131,7 +141,7 @@ async def test_get_menu_by_id(
 ) -> None:
     """Проверка получения меню по его ID."""
     menu = saved_data['menu']
-    response: Response = await ac.get(url=f"/menus/{menu['id']}")
+    response: Response = await ac.get(url=reverse(show_menu_by_id, menu_id=menu['id']))
     assert response.status_code == HTTPStatus.OK, 'The response status is not 200'
     assert (
         response.json()['id'] == menu['id']
@@ -158,7 +168,11 @@ async def test_get_submenu_by_id(
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response: Response = await ac.get(
-        url=f"/menus/{menu['id']}/submenus/{submenu['id']}",
+        url=reverse(
+            show_submenu_by_id,
+            menu_id=menu['id'],
+            submenu_id=submenu['id'],
+        ),
     )
     assert response.status_code == HTTPStatus.OK, 'The response status is not 200'
     assert (
@@ -183,7 +197,7 @@ async def test_delete_submenu(
     menu = saved_data['menu']
     submenu = saved_data['submenu']
     response: Response = await ac.delete(
-        url=f"/menus/{menu['id']}/submenus/{submenu['id']}"
+        url=reverse(delete_submenu, menu_id=menu['id'], submenu_id=submenu['id'])
     )
     assert response.status_code == HTTPStatus.OK, 'The response status is not 200'
     assert (
@@ -191,25 +205,25 @@ async def test_delete_submenu(
     ), 'The deletion message does not match the expected on'
 
 
-async def test_submenu_empty(
+async def test_submenus_empty(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
     """Проверка получения пустого списка подменю."""
     menu = saved_data['menu']
-    response: Response = await ac.get(url=f"/menus/{menu['id']}/submenus")
+    response: Response = await ac.get(url=reverse(show_submenus, menu_id=menu['id']))
     assert response.status_code == HTTPStatus.OK, 'The response status is not 200'
     assert response.json() == [], 'There is a non-empty list in the response'
 
 
-async def test_dish_empty(
+async def test_dishes_empty(
     saved_data: dict[str, Any],
     ac: AsyncClient,
 ) -> None:
     """Проверка получения пустого списка блюд."""
     menu = saved_data['menu']
     submenu = saved_data['submenu']
-    response = await ac.get(url=f"/menus/{menu['id']}/submenus/{submenu['id']}/dishes")
+    response = await ac.get(url=reverse(show_dishes, menu_id=menu['id'], submenu_id=submenu['id']))
     assert response.status_code == HTTPStatus.OK, 'The response status is not 200'
     assert response.json() == [], 'There is an empty list in the response'
 
@@ -220,7 +234,7 @@ async def test_get_menu_by_id_not_empty(
 ) -> None:
     """Проверка получения меню по его ID."""
     menu = saved_data['menu']
-    response: Response = await ac.get(url=f"/menus/{menu['id']}")
+    response: Response = await ac.get(url=reverse(show_menu_by_id, menu_id=menu['id']))
     assert response.status_code == HTTPStatus.OK, 'The response status is not 200'
     assert (
         response.json()['id'] == menu['id']
@@ -246,7 +260,7 @@ async def test_delete_menu(
     """Проверка на удаление меню."""
     menu = saved_data['menu']
     response: Response = await ac.delete(
-        url=f"/menus/{menu['id']}",
+        url=reverse(delete_menu, menu_id=menu['id']),
     )
     assert response.status_code == HTTPStatus.OK, 'The response status is not 200'
     assert (
@@ -256,8 +270,6 @@ async def test_delete_menu(
 
 async def test_menus_is_empty(ac: AsyncClient) -> None:
     """Проверка на пустое меню."""
-    response: Response = await ac.get(
-        url='/menus',
-    )
+    response: Response = await ac.get(url=reverse(show_menus))
     assert response.status_code == HTTPStatus.OK, 'The response status is not 200'
     assert response.json() == [], 'There is a non-empty list in the response'
