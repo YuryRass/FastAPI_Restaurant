@@ -50,7 +50,12 @@ docker compose -f docker-compose-test.yml up -d --build --remove-orphans && dock
 
 ## Количество подменю и блюд
 
-Вывод количества подменю и блюд для Меню через один (сложный) ORM запрос реализован в файле `app/menu/dao.py` в методе `show` класса `MenuDAO`
+Вывод количества подменю и блюд для Меню через один (сложный) ORM запрос реализован в методе [show()](app/menu/dao.py) класса `MenuDAO`
+
+## Аналог Django reverse()
+
+Для тестов реализован функционал [reverse()](app/tests/utils.py), который позволяет получить URL адрес для конечной точки API
+
 
 ## Контакты
 
