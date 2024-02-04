@@ -11,6 +11,7 @@ from app.submenu.model import Submenu
 
 
 class SubmenuDAO(BaseDAO):
+    """CRUD операции для подменю."""
     model = Submenu
 
     @classmethod
@@ -19,6 +20,7 @@ class SubmenuDAO(BaseDAO):
         menu_id: uuid.UUID,
         submenu_id: uuid.UUID | None = None,
     ) -> Submenu:
+        """Отображение подменю."""
         session: AsyncSession
         async with async_session() as session:
             result = await cls.__get_submenu_info(
@@ -36,6 +38,7 @@ class SubmenuDAO(BaseDAO):
         menu_id: uuid.UUID,
         submenu_id: uuid.UUID | None = None,
     ) -> Submenu:
+        """Составление и исполнение запроса об отображении блюда."""
         submenu_alias = aliased(Submenu)
         dish_alias = aliased(Dish)
 

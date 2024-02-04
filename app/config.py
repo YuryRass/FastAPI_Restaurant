@@ -28,6 +28,7 @@ class Settings(BaseSettings):
 
     @property
     def DATABASE_URL(self) -> str:
+        """URL адрес базы данных."""
         return (
             f'postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@'
             f'{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}'
@@ -35,6 +36,7 @@ class Settings(BaseSettings):
 
     @property
     def TEST_DATABASE_URL(self) -> str:
+        """URL адрес тестовой базы данных."""
         return (
             f'postgresql+asyncpg://{self.TEST_DB_USER}:{self.TEST_DB_PASS}@'
             f'{self.TEST_DB_HOST}:{self.TEST_DB_PORT}/{self.TEST_DB_NAME}'
@@ -42,6 +44,7 @@ class Settings(BaseSettings):
 
     @property
     def REDIS_URL(self) -> str:
+        """URL адрес Redis."""
         return f'redis://{self.REDIS_HOST}:{self.REDIS_PORT}'
 
     model_config = SettingsConfigDict(env_file='.env')

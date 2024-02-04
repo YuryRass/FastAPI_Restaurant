@@ -20,6 +20,7 @@ class SubmenuService:
         responce: Response,
         background_task: BackgroundTasks,
     ) -> OutSSubMenu:
+        """Добавление подменю."""
         finded_menu = await MenuDAO.show(menu_id)
         try:
             if finded_menu:
@@ -48,6 +49,7 @@ class SubmenuService:
         submenu_id: uuid.UUID,
         background_task: BackgroundTasks,
     ) -> OutSSubMenu:
+        """Отображение подменю."""
         res = await RedisSubmenuDAO.get(menu_id=menu_id, submenu_id=submenu_id)
         if res is not None:
             return res
@@ -69,6 +71,7 @@ class SubmenuService:
         menu_id: uuid.UUID,
         background_task: BackgroundTasks,
     ) -> list[OutSSubMenu] | OutSSubMenu:
+        """Отображение всех подменю."""
         res = await RedisSubmenuDAO.get_all(menu_id=menu_id)
         if res is not None:
             return res
@@ -89,6 +92,7 @@ class SubmenuService:
         new_data: SSubMenu,
         background_task: BackgroundTasks,
     ) -> OutSSubMenu:
+        """Изменение подменю."""
         submenu = await RedisSubmenuDAO.get(menu_id=menu_id, submenu_id=submenu_id)
         if submenu is None:
             submenu = await SubmenuDAO.show(menu_id, submenu_id)
@@ -118,6 +122,7 @@ class SubmenuService:
         submenu_id: uuid.UUID,
         background_task: BackgroundTasks,
     ) -> dict[str, bool | str]:
+        """Удаление подменю."""
         submenu = await SubmenuDAO.delete_record(id=submenu_id, menu_id=menu_id)
         if submenu:
             background_task.add_task(
