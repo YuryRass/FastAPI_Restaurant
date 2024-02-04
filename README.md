@@ -1,6 +1,11 @@
 # FastAPI-Restaurant
 ## Схема базы данных
-![](./schema.png)
+![](./readme_images/schema.png)
+
+## Интерактивная документация с использованием OpenAPI
+
+![](./readme_images/openapi-1.png)
+![](./readme_images/openapi-2.png)
 
 ## Установка и запуск
 
