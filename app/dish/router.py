@@ -45,7 +45,7 @@ async def show_dish_by_id(
     background_task: BackgroundTasks,
 ) -> OutSDish:
     """
-    **Отображение блюда.***
+    **Отображение блюда.**
 
     Args:
     - **menu_id (uuid.UUID)**: ID меню
@@ -87,6 +87,7 @@ async def update_dish(
 ) -> OutSDish:
     """
     **Изменение блюда.**
+
     Args:
     - **menu_id (uuid.UUID)**: ID меню
     - **submenu_id (uuid.UUID)**: ID подменю
@@ -94,7 +95,7 @@ async def update_dish(
     - **new_data (SDish)**: новые данные для блюда
 
     Returns:
-        OutSDish: новое блюдо
+    - **OutSDish**: новое блюдо
     """
     return await DishService.update(
         menu_id,
@@ -121,7 +122,7 @@ async def delete_dish(
     - **dish_id (uuid.UUID)**: ID блюда
 
     Returns:
-        dict[str, bool | str]: информация об удалении
+    - **dict[str, bool | str]**: информация об удалении
     """
     return await DishService.delete(
         menu_id,

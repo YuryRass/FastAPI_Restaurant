@@ -35,6 +35,16 @@ async def show_submenu_by_id(
     submenu_id: uuid.UUID,
     background_task: BackgroundTasks,
 ) -> OutSSubMenu:
+    """
+    **Отображение подменю.**
+
+    Args:
+    - **menu_id (uuid.UUID)**: ID меню
+    - **submenu_id (uuid.UUID)**: ID подменю
+
+    Returns:
+    - **OutSSubMenu**: найденное подменю
+    """
     return await SubmenuService.show(menu_id, submenu_id, background_task)
 
 
@@ -43,6 +53,15 @@ async def show_submenus(
     menu_id: uuid.UUID,
     background_task: BackgroundTasks,
 ) -> list[OutSSubMenu] | OutSSubMenu:
+    """
+    **Отображение всех подменю.**
+
+    Args:
+    - **menu_id (uuid.UUID)**: ID меню
+
+    Returns:
+    - **list[OutSSubMenu] | OutSSubMenu**: список подменю
+    """
     return await SubmenuService.show_all(menu_id, background_task)
 
 
@@ -53,6 +72,17 @@ async def update_submenu(
     new_data: SSubMenu,
     background_task: BackgroundTasks,
 ) -> OutSSubMenu:
+    """
+    **Изменение подменю.**
+
+    Args:
+    - **menu_id (uuid.UUID)**: ID меню
+    - **submenu_id (uuid.UUID)**: ID подменю
+    - **new_data (SSubMenu)**: новые данные о поменю
+
+    Returns:
+    - **OutSSubMenu**: новые данные о подменю
+    """
     return await SubmenuService.update(
         menu_id,
         submenu_id,
@@ -67,4 +97,14 @@ async def delete_submenu(
     submenu_id: uuid.UUID,
     background_task: BackgroundTasks,
 ) -> dict[str, bool | str]:
+    """
+    **Удаление подменю.**
+
+    Args:
+    - **menu_id (uuid.UUID)**: ID меню
+    - **submenu_id (uuid.UUID)**: ID подменю
+
+    Returns:
+    - **dict[str, bool | str]**: информация об удалении
+    """
     return await SubmenuService.delete(menu_id, submenu_id, background_task)
