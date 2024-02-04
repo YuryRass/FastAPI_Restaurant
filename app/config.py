@@ -26,6 +26,9 @@ class Settings(BaseSettings):
     REDIS_HOST: str
     REDIS_PORT: int
 
+    # Время жизни записи в Redis
+    EXPIRATION: int = 600
+
     @property
     def DATABASE_URL(self) -> str:
         """URL адрес базы данных."""

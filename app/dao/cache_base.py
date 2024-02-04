@@ -3,6 +3,7 @@ from typing import Any, Generic
 
 from aioredis import Redis
 
+from app.config import settings
 from app.dao import ModelType
 from app.database.redis import redis_cacher
 
@@ -25,7 +26,7 @@ class RedisBaseDAO(Generic[ModelType]):
         await cls.cacher.set(
             cls.model.LINK.format(**kwargs),
             pickle.dumps(items),
-            ex=3600,
+            ex=settings.EXPIRATION,
         )
 
     @classmethod
@@ -43,7 +44,7 @@ class RedisBaseDAO(Generic[ModelType]):
         await cls.cacher.set(
             cls.model.LONG_LINK.format(**kwargs),
             pickle.dumps(item),
-            ex=3600,
+            ex=settings.EXPIRATION,
         )
 
     @classmethod
@@ -69,5 +70,5 @@ class RedisBaseDAO(Generic[ModelType]):
         await cls.cacher.set(
             cls.model.LONG_LINK.format(**kwargs),
             pickle.dumps(item),
-            ex=3600,
+            ex=settings.EXPIRATION,
         )
