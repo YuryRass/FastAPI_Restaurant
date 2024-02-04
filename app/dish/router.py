@@ -1,13 +1,10 @@
 import uuid
 
-from fastapi import APIRouter, Response, status
-from sqlalchemy.exc import IntegrityError
+from fastapi import APIRouter, BackgroundTasks, Response
 
-from app.dish.dao import DishDAO
 from app.dish.model import Dish
+from app.dish.service import DishService
 from app.dish.shemas import OutSDish, SDish
-from app.exceptions import DishNotFoundException, SimilarDishTitlesException
-from app.submenu.dao import SubmenuDAO
 
 router: APIRouter = APIRouter(tags=['Dishes'])
 
@@ -18,36 +15,26 @@ async def add_dish(
     submenu_id: uuid.UUID,
     dish: SDish,
     responce: Response,
+    background_task: BackgroundTasks,
 ) -> OutSDish:
     """
-    Добавление блюда.
+    **Добавление блюда.**
 
     Args:
     - **menu_id (uuid.UUID)**: ID меню
     - **submenu_id (uuid.UUID)**: ID подменю
-    - **dish (SDish)**: pydantic модель, описывающая блюдо (title, description)
-    - **responce (Response)**: HTTP ответ
-
-    Raises:
-    - **SimilarDishTitlesException**: данное название блюда уже существует
+    - **dish (SDish)**: данные о новом блюде (title, description)
 
     Returns:
     - **OutSDish**: информация о добавленном блюде
     """
-    finded_submenu = await SubmenuDAO.show(menu_id, submenu_id)
-    try:
-        if finded_submenu:
-            new_dish = await DishDAO.add(
-                title=dish.title,
-                description=dish.description,
-                price=dish.price,
-                submenu_id=submenu_id,
-            )
-    except IntegrityError:
-        raise SimilarDishTitlesException
-    responce.status_code = status.HTTP_201_CREATED
-    added_dish = await DishDAO.show(menu_id, submenu_id, new_dish['id'])
-    return added_dish
+    return await DishService.add(
+        menu_id,
+        submenu_id,
+        dish,
+        responce,
+        background_task,
+    )
 
 
 @router.get(Dish.LONG_LINK)
@@ -55,20 +42,39 @@ async def show_dish_by_id(
     menu_id: uuid.UUID,
     submenu_id: uuid.UUID,
     dish_id: uuid.UUID,
+    background_task: BackgroundTasks,
 ) -> OutSDish:
-    dish = await DishDAO.show(menu_id, submenu_id, dish_id)
+    """
+    **Отображение блюда.***
 
-    if not dish:
-        raise DishNotFoundException
+    Args:
+    - **menu_id (uuid.UUID)**: ID меню
+    - **submenu_id (uuid.UUID)**: ID подменю
+    - **dish_id (uuid.UUID)**: ID блюда
 
-    return dish
+    Returns:
+    - **OutSDish**: найденное блюдо
+    """
+    return await DishService.show(menu_id, submenu_id, dish_id, background_task)
 
 
 @router.get(Dish.LINK)
-async def show_dishes(menu_id: uuid.UUID, submenu_id: uuid.UUID) -> list[OutSDish]:
-    dishes = await DishDAO.show(menu_id, submenu_id)
+async def show_dishes(
+    menu_id: uuid.UUID,
+    submenu_id: uuid.UUID,
+    background_task: BackgroundTasks,
+) -> list[OutSDish]:
+    """
+    **Отображение всех блюд.**
 
-    return dishes
+    Args:
+    - **menu_id (uuid.UUID)**: ID меню
+    - **submenu_id (uuid.UUID)**: ID подменю
+
+    Returns:
+    - **list[OutSDish]**: список блюд
+    """
+    return await DishService.show_all(menu_id, submenu_id, background_task)
 
 
 @router.patch(Dish.LONG_LINK)
@@ -77,21 +83,26 @@ async def update_dish(
     submenu_id: uuid.UUID,
     dish_id: uuid.UUID,
     new_data: SDish,
+    background_task: BackgroundTasks,
 ) -> OutSDish:
-    dish = await DishDAO.show(menu_id, submenu_id, dish_id)
-    if not dish:
-        raise DishNotFoundException
+    """
+    **Изменение блюда.**
+    Args:
+    - **menu_id (uuid.UUID)**: ID меню
+    - **submenu_id (uuid.UUID)**: ID подменю
+    - **dish_id (uuid.UUID)**: ID блюда
+    - **new_data (SDish)**: новые данные для блюда
 
-    updated_dish = await DishDAO.update(
+    Returns:
+        OutSDish: новое блюдо
+    """
+    return await DishService.update(
+        menu_id,
+        submenu_id,
         dish_id,
-        title=new_data.title,
-        description=new_data.description,
-        price=new_data.price,
+        new_data,
+        background_task,
     )
-
-    new_dish = await DishDAO.show(menu_id, submenu_id, updated_dish['id'])
-
-    return new_dish
 
 
 @router.delete(Dish.LONG_LINK)
@@ -99,9 +110,22 @@ async def delete_dish(
     menu_id: uuid.UUID,
     submenu_id: uuid.UUID,
     dish_id: uuid.UUID,
+    background_task: BackgroundTasks,
 ) -> dict[str, bool | str]:
-    dish = await DishDAO.show(menu_id, submenu_id, dish_id)
-    if dish:
-        await DishDAO.delete_record(id=dish_id, submenu_id=submenu_id)
-        return {'status': True, 'message': 'The dish has been deleted'}
-    return {'status': False, 'message': 'Dish not found'}
+    """
+    **Удаление блюда.**
+
+    Args:
+    - **menu_id (uuid.UUID)**: ID меню
+    - **submenu_id (uuid.UUID)**: ID подменю
+    - **dish_id (uuid.UUID)**: ID блюда
+
+    Returns:
+        dict[str, bool | str]: информация об удалении
+    """
+    return await DishService.delete(
+        menu_id,
+        submenu_id,
+        dish_id,
+        background_task,
+    )

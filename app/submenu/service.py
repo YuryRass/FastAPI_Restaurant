@@ -4,12 +4,14 @@ from fastapi import BackgroundTasks, Response, status
 from sqlalchemy.exc import IntegrityError
 
 from app.exceptions import SimilarSubmenuTitlesException, SubMenuNotFoundException
+from app.menu.dao import MenuDAO
 from app.submenu.cache_dao import RedisSubmenuDAO
 from app.submenu.dao import SubmenuDAO
 from app.submenu.shemas import OutSSubMenu, SSubMenu
 
 
 class SubmenuService:
+    """Сервисный слой для подменю."""
     @classmethod
     async def add(
         cls,
@@ -18,12 +20,14 @@ class SubmenuService:
         responce: Response,
         background_task: BackgroundTasks,
     ) -> OutSSubMenu:
+        finded_menu = await MenuDAO.show(menu_id)
         try:
-            submenu = await SubmenuDAO.add(
-                title=submenu.title,
-                description=submenu.description,
-                menu_id=menu_id,
-            )
+            if finded_menu:
+                submenu = await SubmenuDAO.add(
+                    title=submenu.title,
+                    description=submenu.description,
+                    menu_id=menu_id,
+                )
         except IntegrityError:
             raise SimilarSubmenuTitlesException
         responce.status_code = status.HTTP_201_CREATED

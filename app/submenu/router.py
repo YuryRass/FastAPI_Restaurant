@@ -16,6 +16,16 @@ async def add_submenu(
     responce: Response,
     backgraiund_task: BackgroundTasks,
 ) -> OutSSubMenu:
+    """
+    **Добавление подменю.**
+
+    Args:
+    - **menu_id (uuid.UUID)**: ID подменю
+    - **menu (SSubMenu)**: данные о новом подменю
+
+    Returns:
+    - **OutSSubMenu**: добавленное подменю
+    """
     return await SubmenuService.add(menu_id, menu, responce, backgraiund_task)
 
 
