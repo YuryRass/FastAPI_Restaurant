@@ -2,12 +2,11 @@ from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
 from app.config import settings
-from app.tasks.schemas import JsonDish, JsonMenu, JsonSubmenu
+from app.utils.json_shemas import JsonDish, JsonSubmenu, JsonMenu
 
 
 class ExcelReader:
     """Чтение данных из Excel файла."""
-
     def __init__(self) -> None:
         self.sheet: Worksheet = load_workbook(filename=settings.EXCEL_PATH).active
         self.menus: list[JsonMenu] = []
@@ -45,12 +44,20 @@ class ExcelReader:
                 )
             # Блюда
             else:
+                # получаем скидку на блюдо
+                discount = self.__get_discount(row[6])
+
                 self.menus[-1].submenus[-1].dishes.append(
                     JsonDish(
                         id=row[2],
                         title=row[3],
                         description=row[4],
-                        price=row[5],
-                        discount=row[6] if row[6] else 0,
+                        price=row[5] * discount if discount else row[5],
                     )
                 )
+
+    def __get_discount(self, discount: str | None) -> int | None:
+        """Проверка и получение скидки на блюдо."""
+        if discount and discount.isdigit() and 0 <= int(discount) <= 100:
+            return int(discount)
+        return None

@@ -25,6 +25,7 @@ tags_metadata = [
     },
 ]
 
+
 app: FastAPI = FastAPI(
     title='FastAPI Restaurant API',
     description=description,
@@ -40,7 +41,8 @@ app: FastAPI = FastAPI(
         'url': 'https://www.apache.org/licenses/LICENSE-2.0.html',
     },
     openapi_tags=tags_metadata,
-    root_path='/api/v1')
+    root_path='/api/v1',
+)
 
 app.include_router(dish_router)
 app.include_router(submenu_router)

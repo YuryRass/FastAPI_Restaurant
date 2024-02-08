@@ -7,7 +7,7 @@ from app.exceptions import MenuNotFoundException, SimilarMenuTitlesException
 from app.menu.cache_dao import RedisMenuDAO
 from app.menu.dao import MenuDAO
 from app.menu.shemas import OutSMenu, SMenu
-from app.tasks.schemas import JsonMenu
+from app.utils.json_shemas import JsonMenu
 
 
 class MenuService:

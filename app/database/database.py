@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import UUID, NullPool
+from sqlalchemy import NullPool
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
 
@@ -29,7 +29,6 @@ class Base(DeclarativeBase):
         return cls.__name__.lower()
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4,
     )

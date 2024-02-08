@@ -5,7 +5,7 @@ from fastapi import APIRouter, BackgroundTasks, Response
 from app.menu.model import Menu
 from app.menu.service import MenuService
 from app.menu.shemas import OutSMenu, SMenu
-from app.tasks.schemas import JsonMenu
+from app.utils.json_shemas import JsonMenu
 
 router: APIRouter = APIRouter(tags=['Menus'])
 
