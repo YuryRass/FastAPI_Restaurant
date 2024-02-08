@@ -5,8 +5,7 @@ from fastapi import APIRouter, BackgroundTasks, Response
 from app.menu.model import Menu
 from app.menu.service import MenuService
 from app.menu.shemas import OutSMenu, SMenu
-
-# from app.tasks.schemas import JsonMenu
+from app.tasks.schemas import JsonMenu
 
 router: APIRouter = APIRouter(tags=['Menus'])
 
@@ -24,33 +23,24 @@ router: APIRouter = APIRouter(tags=['Menus'])
                         'title': 'Новое меню',
                         'description': 'Описание нового меню',
                         'submenus_count': 0,
-                        'dishes_count': 0
+                        'dishes_count': 0,
                     }
                 }
-            }
+            },
         },
         400: {
             'description': 'Menu title must be unique.',
             'content': {
-                'application/json': {
-                    'example': {
-                        'detail': 'Menu title must be unique'
-                    }
-                }
-            }
+                'application/json': {'example': {'detail': 'Menu title must be unique'}}
+            },
         },
         500: {
             'description': 'Internal server error.',
             'content': {
-                'application/json': {
-                    'example': {
-                        'detail': 'Internal server error'
-                    }
-                }
-            }
+                'application/json': {'example': {'detail': 'Internal server error'}}
+            },
         },
-    }
-
+    },
 )
 async def add_menu(
     menu: SMenu,
@@ -113,30 +103,26 @@ async def add_menu(
                             'title': 'Меню 1',
                             'description': 'Описание меню 1',
                             'submenus_count': 3,
-                            'dishes_count': 15
+                            'dishes_count': 15,
                         },
                         {
                             'id': '53a49ab3-ec2d-4a10-bc84-fa980ed7d8c3',
                             'title': 'Меню 2',
                             'description': 'Описание меню 2',
                             'submenus_count': 2,
-                            'dishes_count': 10
-                        }
+                            'dishes_count': 10,
+                        },
                     ]
                 }
-            }
+            },
         },
         500: {
             'description': 'Внутренняя ошибка сервера.',
             'content': {
-                'application/json': {
-                    'example': {
-                        'detail': 'Внутренняя ошибка сервера'
-                    }
-                }
-            }
+                'application/json': {'example': {'detail': 'Внутренняя ошибка сервера'}}
+            },
         },
-    }
+    },
 )
 async def show_menus(background_task: BackgroundTasks) -> list[OutSMenu]:
     """
@@ -190,10 +176,166 @@ async def show_menus(background_task: BackgroundTasks) -> list[OutSMenu]:
 
     return await MenuService.show_all(background_task)
 
-# @router.get(Menu.FULL_LINK)
-# async def show_full_menus() -> list[JsonMenu]:
-#     menus = await MenuService.show_full()
-#     return menus
+
+@router.get(
+    Menu.FULL_LINK,
+    response_model=list[JsonMenu],
+    responses={
+        200: {
+            'description': 'Список всех меню успешно получен.',
+            'content': {
+                'application/json': {
+                    'example': [
+                        {
+                            'id': '52777d1c-04b3-4a5a-9f1f-43e212ed0c2a',
+                            'title': 'Специальное меню',
+                            'description': 'Это меню предлагает разнообразные блюда',
+                            'submenus': [
+                                {
+                                    'id': 'ab9aafff-e927-4e1e-ba1f-35b03c1d6e78',
+                                    'title': 'Новое подменю',
+                                    'description': 'Описание нового подменю',
+                                    'dishes': [],
+                                },
+                                {
+                                    'id': '9ae493f2-345e-4d23-8c1a-d9ee5095b6cd',
+                                    'title': 'Новое подменю-2',
+                                    'description': 'Описание нового подменю',
+                                    'dishes': [],
+                                },
+                            ],
+                        },
+                        {
+                            'id': 'b2ff62e3-0ecf-429e-a116-771be2845b2a',
+                            'title': 'Специальное меню-2',
+                            'description': 'Это меню предлагает разнообразные блюда',
+                            'submenus': [
+                                {
+                                    'id': '70ef9e89-c3b1-4620-abc7-7ca59b398858',
+                                    'title': 'Submenu',
+                                    'description': 'Описание нового submenu',
+                                    'dishes': [],
+                                },
+                                {
+                                    'id': 'b4e8f44e-982a-4dcb-bd90-ae1d26a89d35',
+                                    'title': 'Submenu-2',
+                                    'description': 'Описание нового submenu-2',
+                                    'dishes': [
+                                        {
+                                            'id': 'afb49f89-6f73-41d3-9a8d-5a9727a490ac',
+                                            'title': 'Цезарь',
+                                            'description': 'Классический салат Цезарь с курицей',
+                                            'price': 7.99,
+                                        },
+                                        {
+                                            'id': '24a2c1ec-1389-410b-b7a8-5b4b3e784e33',
+                                            'title': 'Бутер с маслом',
+                                            'description': 'Масло по вкусу как зубная паста',
+                                            'price': 7.99,
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ]
+                }
+            },
+        },
+        500: {
+            'description': 'Внутренняя ошибка сервера.',
+            'content': {
+                'application/json': {'example': {'detail': 'Внутренняя ошибка сервера'}}
+            },
+        },
+    },
+)
+async def show_full_list_menus(background_task: BackgroundTasks) -> list[JsonMenu]:
+    """
+    **Получение всех меню со всеми связанными подменю и со всеми связанными блюдами.**
+
+    **Response (200 OK):**
+    - **list[JsonMenu]**: Список всех меню о всеми связанными подменю
+    и со всеми связанными блюдами в системе.
+
+    Пример ответа (200 OK):
+    ```json
+    [
+        {
+            "id": "52777d1c-04b3-4a5a-9f1f-43e212ed0c2a",
+            "title": "Специальное меню",
+            "description": "Это меню предлагает разнообразные блюда",
+            "submenus": [
+                {
+                    "id": "ab9aafff-e927-4e1e-ba1f-35b03c1d6e78",
+                    "title": "Новое подменю",
+                    "description": "Описание нового подменю",
+                    "dishes": [],
+                },
+                {
+                    "id": "9ae493f2-345e-4d23-8c1a-d9ee5095b6cd",
+                    "title": "Новое подменю-2",
+                    "description": "Описание нового подменю",
+                    "dishes": [],
+                },
+            ],
+        },
+        {
+            "id": "b2ff62e3-0ecf-429e-a116-771be2845b2a",
+            "title": "Специальное меню-2",
+            "description": "Это меню предлагает разнообразные блюда",
+            "submenus": [
+                {
+                    "id": "70ef9e89-c3b1-4620-abc7-7ca59b398858",
+                    "title": "Submenu",
+                    "description": "Описание нового submenu",
+                    "dishes": [],
+                },
+                {
+                    "id": "b4e8f44e-982a-4dcb-bd90-ae1d26a89d35",
+                    "title": "Submenu-2",
+                    "description": "Описание нового submenu-2",
+                    "dishes": [
+                        {
+                            "id": "afb49f89-6f73-41d3-9a8d-5a9727a490ac",
+                            "title": "Цезарь",
+                            "description": "Классический салат Цезарь с курицей",
+                            "price": 7.99,
+                        },
+                        {
+                            "id": "24a2c1ec-1389-410b-b7a8-5b4b3e784e33",
+                            "title": "Бутер с маслом",
+                            "description": "Масло по вкусу как зубная паста",
+                            "price": 7.99,
+                        },
+                    ],
+                },
+            ],
+        },
+    ]
+    ```
+
+    **Response (500 Internal Server Error):**
+    - **detail** (str): Описание внутренней ошибки сервера.
+
+    Пример ответа (500 Internal Server Error):
+    ```json
+    {
+        "detail": "Внутренняя ошибка сервера"
+    }
+    ```
+
+    **Responses:**
+    - `200 OK`: Полный список всех меню успешно получен.
+    - `500 Internal Server Error`: Внутренняя ошибка сервера.
+
+    :param background_task: Фоновая задача для обновления данных.
+    :type background_task: BackgroundTasks
+
+    :return: Полный список всех меню в системе.
+    :rtype: list[JsonMenu]
+    """
+    menus = await MenuService.show_full_list(background_task)
+    return menus
 
 
 @router.get(
@@ -209,32 +351,22 @@ async def show_menus(background_task: BackgroundTasks) -> list[OutSMenu]:
                         'title': 'Меню 1',
                         'description': 'Описание меню 1',
                         'submenus_count': 3,
-                        'dishes_count': 15
+                        'dishes_count': 15,
                     }
                 }
-            }
+            },
         },
         404: {
             'description': 'menu not found.',
-            'content': {
-                'application/json': {
-                    'example': {
-                        'detail': 'menu not found'
-                    }
-                }
-            }
+            'content': {'application/json': {'example': {'detail': 'menu not found'}}},
         },
         500: {
             'description': 'Внутренняя ошибка сервера.',
             'content': {
-                'application/json': {
-                    'example': {
-                        'detail': 'Внутренняя ошибка сервера'
-                    }
-                }
-            }
+                'application/json': {'example': {'detail': 'Внутренняя ошибка сервера'}}
+            },
         },
-    }
+    },
 )
 async def show_menu_by_id(
     menu_id: uuid.UUID, background_task: BackgroundTasks
@@ -310,32 +442,22 @@ async def show_menu_by_id(
                         'title': 'Обновленное меню',
                         'description': 'Новое описание меню',
                         'submenus_count': 3,
-                        'dishes_count': 15
+                        'dishes_count': 15,
                     }
                 }
-            }
+            },
         },
         404: {
             'description': 'Меню не найдено.',
-            'content': {
-                'application/json': {
-                    'example': {
-                        'detail': 'Меню не найдено'
-                    }
-                }
-            }
+            'content': {'application/json': {'example': {'detail': 'Меню не найдено'}}},
         },
         500: {
             'description': 'Внутренняя ошибка сервера.',
             'content': {
-                'application/json': {
-                    'example': {
-                        'detail': 'Внутренняя ошибка сервера'
-                    }
-                }
-            }
+                'application/json': {'example': {'detail': 'Внутренняя ошибка сервера'}}
+            },
         },
-    }
+    },
 )
 async def update_menu(
     menu_id: uuid.UUID,
@@ -411,35 +533,25 @@ async def update_menu(
             'description': 'Меню успешно удалено.',
             'content': {
                 'application/json': {
-                    'example': {
-                        'status': True,
-                        'message': 'Меню успешно удалено'
-                    }
+                    'example': {'status': True, 'message': 'Меню успешно удалено'}
                 }
-            }
+            },
         },
         404: {
             'description': 'Меню не найдено.',
             'content': {
                 'application/json': {
-                    'example': {
-                        'status': False,
-                        'message': 'Меню не найдено'
-                    }
+                    'example': {'status': False, 'message': 'Меню не найдено'}
                 }
-            }
+            },
         },
         500: {
             'description': 'Внутренняя ошибка сервера.',
             'content': {
-                'application/json': {
-                    'example': {
-                        'detail': 'Внутренняя ошибка сервера'
-                    }
-                }
-            }
+                'application/json': {'example': {'detail': 'Внутренняя ошибка сервера'}}
+            },
         },
-    }
+    },
 )
 async def delete_menu(
     menu_id: uuid.UUID,

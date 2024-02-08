@@ -14,12 +14,17 @@ class MenuService:
     """Сервисный слой для меню."""
 
     @classmethod
-    async def show_full(cls) -> list[JsonMenu]:
+    async def show_full_list(cls, background_task: BackgroundTasks) -> list[JsonMenu]:
         """
         Отображение всех меню со всеми связанными подменю
         и со всеми связанными блюдами.
         """
-        return await MenuDAO.show_full()
+        res = await RedisMenuDAO.get_full_list()
+        if res is not None:
+            return res
+        menus = await MenuDAO.show_full_list()
+        background_task.add_task(RedisMenuDAO.set_full_list, menus)
+        return menus
 
     @classmethod
     async def add(

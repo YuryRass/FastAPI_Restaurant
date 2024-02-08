@@ -1,4 +1,4 @@
-from pydantic import BaseModel, UUID4
+from pydantic import UUID4, BaseModel
 
 
 class JsonDish(BaseModel):
@@ -6,7 +6,7 @@ class JsonDish(BaseModel):
     title: str
     description: str
     price: float
-    # discount: int
+
 
 class JsonSubmenu(BaseModel):
     id: UUID4

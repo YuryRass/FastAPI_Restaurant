@@ -21,7 +21,7 @@ class MenuDAO(BaseDAO):
     dish_alias = aliased(Dish)
 
     @classmethod
-    async def show_full(cls) -> list[Menu]:
+    async def show_full_list(cls) -> list[Menu]:
         """
         Отображение всех меню со всеми связанными подменю
         и со всеми связанными блюдами.
