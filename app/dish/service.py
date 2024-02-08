@@ -12,6 +12,7 @@ from app.submenu.dao import SubmenuDAO
 
 class DishService:
     """Сервисный слой для блюда."""
+
     @classmethod
     async def add(
         cls,
@@ -25,12 +26,9 @@ class DishService:
         finded_submenu = await SubmenuDAO.show(menu_id, submenu_id)
         try:
             if finded_submenu:
-                new_dish = await DishDAO.add(
-                    title=dish.title,
-                    description=dish.description,
-                    price=dish.price,
-                    submenu_id=submenu_id,
-                )
+                data = dish.model_dump(exclude_none=True)
+                data.update(submenu_id=submenu_id)
+                new_dish = await DishDAO.add(**data)
         except IntegrityError:
             raise SimilarDishTitlesException
         response.status_code = status.HTTP_201_CREATED
@@ -121,10 +119,7 @@ class DishService:
             raise DishNotFoundException
 
         updated_dish = await DishDAO.update(
-            dish_id,
-            title=new_data.title,
-            description=new_data.description,
-            price=new_data.price,
+            dish_id, **new_data.model_dump(exclude_none=True)
         )
 
         new_dish = await DishDAO.show(menu_id, submenu_id, updated_dish['id'])

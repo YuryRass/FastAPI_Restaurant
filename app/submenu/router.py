@@ -50,7 +50,7 @@ router: APIRouter = APIRouter(tags=['Submenus'])
 )
 async def add_submenu(
     menu_id: uuid.UUID,
-    menu: SSubMenu,
+    submenu: SSubMenu,
     response: Response,
     background_task: BackgroundTasks,
 ) -> OutSSubMenu:
@@ -93,7 +93,7 @@ async def add_submenu(
         ```
 
     """
-    return await SubmenuService.add(menu_id, menu, response, background_task)
+    return await SubmenuService.add(menu_id, submenu, response, background_task)
 
 
 @router.get(

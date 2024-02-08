@@ -20,3 +20,4 @@ class Menu(Base):
 
     LINK = '/menus'
     LONG_LINK = '/menus/{menu_id}'
+    FULL_LINK = '/fullmenus'

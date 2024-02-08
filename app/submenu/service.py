@@ -12,6 +12,7 @@ from app.submenu.shemas import OutSSubMenu, SSubMenu
 
 class SubmenuService:
     """Сервисный слой для подменю."""
+
     @classmethod
     async def add(
         cls,
@@ -24,11 +25,9 @@ class SubmenuService:
         finded_menu = await MenuDAO.show(menu_id)
         try:
             if finded_menu:
-                submenu = await SubmenuDAO.add(
-                    title=submenu.title,
-                    description=submenu.description,
-                    menu_id=menu_id,
-                )
+                data = submenu.model_dump(exclude_none=True)
+                data.update(menu_id=menu_id)
+                submenu = await SubmenuDAO.add(**data)
         except IntegrityError:
             raise SimilarSubmenuTitlesException
         response.status_code = status.HTTP_201_CREATED
@@ -100,9 +99,7 @@ class SubmenuService:
             raise SubMenuNotFoundException
 
         updated_submenu = await SubmenuDAO.update(
-            submenu_id,
-            title=new_data.title,
-            description=new_data.description,
+            submenu_id, **new_data.model_dump(exclude_none=True)
         )
 
         submenu_res = await SubmenuDAO.show(menu_id, updated_submenu['id'])

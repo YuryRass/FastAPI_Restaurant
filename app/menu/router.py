@@ -6,6 +6,8 @@ from app.menu.model import Menu
 from app.menu.service import MenuService
 from app.menu.shemas import OutSMenu, SMenu
 
+# from app.tasks.schemas import JsonMenu
+
 router: APIRouter = APIRouter(tags=['Menus'])
 
 
@@ -187,6 +189,11 @@ async def show_menus(background_task: BackgroundTasks) -> list[OutSMenu]:
     """
 
     return await MenuService.show_all(background_task)
+
+# @router.get(Menu.FULL_LINK)
+# async def show_full_menus() -> list[JsonMenu]:
+#     menus = await MenuService.show_full()
+#     return menus
 
 
 @router.get(

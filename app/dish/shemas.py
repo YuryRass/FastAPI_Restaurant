@@ -2,18 +2,23 @@ from pydantic import UUID4, BaseModel, Field, field_validator
 
 
 class SDish(BaseModel):
-    """Схема блюда."""
-    title: str = Field(..., description='Название блюда', example='Цезарь')
-    description: str = Field(..., description='Описание блюда', example='Классический салат Цезарь с курицей')
-    price: float = Field(..., description='Цена блюда в USD', example=7.99)
+    """Схема блюда для создания/изменения."""
+
+    id: UUID4 | None = Field(
+        None,
+        description='Уникальный идентификатор блюда',
+        example='52777d1c-04b3-4a5a-9f1f-43e212ed0c2a',
+    )
+    title: str | None = Field(None, description='Название блюда', example='Цезарь')
+    description: str | None = Field(
+        None,
+        description='Описание блюда',
+        example='Классический салат Цезарь с курицей',
+    )
+    price: float | None = Field(None, description='Цена блюда в USD', example=7.99)
 
 
-class SUUId(BaseModel):
-    """Схема идентификатора блюда."""
-    id: UUID4 = Field(..., description='Уникальный идентификатор блюда', example='52777d1c-04b3-4a5a-9f1f-43e212ed0c2a')
-
-
-class OutSDish(SDish, SUUId):
+class OutSDish(SDish):
     """Схема для вывода информации о блюде."""
 
     @field_validator('price')

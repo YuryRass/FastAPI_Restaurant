@@ -1,5 +1,6 @@
 from typing import Literal
 
+from pydantic import FilePath
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -28,6 +29,9 @@ class Settings(BaseSettings):
 
     # Время жизни записи в Redis
     EXPIRATION: int = 600
+
+    # Excel файл с данными о меню
+    EXCEL_PATH: FilePath = 'app/admin/Menu.xlsx'
 
     @property
     def DATABASE_URL(self) -> str:

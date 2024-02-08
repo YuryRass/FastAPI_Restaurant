@@ -7,10 +7,20 @@ from app.exceptions import MenuNotFoundException, SimilarMenuTitlesException
 from app.menu.cache_dao import RedisMenuDAO
 from app.menu.dao import MenuDAO
 from app.menu.shemas import OutSMenu, SMenu
+from app.tasks.schemas import JsonMenu
 
 
 class MenuService:
     """Сервисный слой для меню."""
+
+    @classmethod
+    async def show_full(cls) -> list[JsonMenu]:
+        """
+        Отображение всех меню со всеми связанными подменю
+        и со всеми связанными блюдами.
+        """
+        return await MenuDAO.show_full()
+
     @classmethod
     async def add(
         cls,
@@ -20,10 +30,7 @@ class MenuService:
     ) -> OutSMenu:
         """Добавление меню."""
         try:
-            menu_res = await MenuDAO.add(
-                title=menu.title,
-                description=menu.description,
-            )
+            menu_res = await MenuDAO.add(**menu.model_dump(exclude_none=True))
         except IntegrityError:
             raise SimilarMenuTitlesException
 
@@ -77,11 +84,8 @@ class MenuService:
             menu = await MenuDAO.show(menu_id)
         if not menu:
             raise MenuNotFoundException
-
         updated_menu = await MenuDAO.update(
-            menu_id,
-            title=new_data.title,
-            description=new_data.description,
+            menu_id, **new_data.model_dump(exclude_none=True)
         )
 
         menu_res = await MenuDAO.show(updated_menu['id'])

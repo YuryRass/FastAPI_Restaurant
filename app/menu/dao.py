@@ -3,7 +3,7 @@ from typing import Any
 
 from sqlalchemy import ScalarSelect, Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import aliased
+from sqlalchemy.orm import aliased, selectinload
 
 from app.dao.base import BaseDAO
 from app.database.database import async_session
@@ -14,10 +14,22 @@ from app.submenu.model import Submenu
 
 class MenuDAO(BaseDAO):
     """CRUD операции для меню."""
+
     model = Menu
     menu_alias = aliased(Menu)
     submenu_alias = aliased(Submenu)
     dish_alias = aliased(Dish)
+
+    @classmethod
+    async def show_full(cls) -> list[Menu]:
+        """
+        Отображение всех меню со всеми связанными подменю
+        и со всеми связанными блюдами.
+        """
+        session: AsyncSession
+        async with async_session() as session:
+            res = await cls.__get_full_menus_info(session)
+            return res
 
     @classmethod
     async def show_all(cls) -> list[Menu]:
@@ -25,7 +37,6 @@ class MenuDAO(BaseDAO):
         session: AsyncSession
         async with async_session() as session:
             res = await cls.__get_menus_info(session)
-
             return res
 
     @classmethod
@@ -37,7 +48,6 @@ class MenuDAO(BaseDAO):
         session: AsyncSession
         async with async_session() as session:
             res = await cls.__get_menu_info(session, menu_id)
-
             return res
 
     @classmethod
@@ -53,8 +63,21 @@ class MenuDAO(BaseDAO):
         res = menus.mappings().all()
         if res:
             return res[0]
-
         return res
+
+    @classmethod
+    async def __get_full_menus_info(cls, session: AsyncSession) -> list[Menu]:
+        """
+        Получение всех меню со всеми связанными подменю
+        и со всеми связанными блюдами.
+        """
+        stmt = (
+            select(Menu).options(
+                selectinload(Menu.submenus).options(selectinload(Submenu.dishes))
+            )
+        )
+        menus = await session.execute(stmt)
+        return menus.scalars().all()
 
     @classmethod
     async def __get_menus_info(cls, session: AsyncSession) -> list[Menu]:
@@ -62,7 +85,6 @@ class MenuDAO(BaseDAO):
         menus_query = cls.__get_menus_query()
         menus = await session.execute(menus_query)
         res = menus.mappings().all()
-
         return res
 
     @classmethod

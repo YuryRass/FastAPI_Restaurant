@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 
 class Dish(Base):
     """Таблица, описывающая блюда ресторана."""
+
     title: Mapped[str] = mapped_column(unique=True)
     description: Mapped[str | None]
     price: Mapped[float]
