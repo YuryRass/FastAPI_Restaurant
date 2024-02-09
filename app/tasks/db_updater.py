@@ -5,13 +5,12 @@ from jsondiff import diff
 
 from app.config import settings
 from app.menu.model import Menu
-from app.utils.json_shemas import JsonMenu
 
 
 class DBUpdater:
     """Обновление данных в БД после чтения excel файла."""
 
-    def __init__(self, excel_data: list[JsonMenu]):
+    def __init__(self, excel_data: list[dict[str, Any]]):
         self.excel_data = excel_data
         self.db_data: Any = self.__get_menus_full_list_from_db()
 

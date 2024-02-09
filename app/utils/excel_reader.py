@@ -1,3 +1,5 @@
+from typing import Any
+
 from app.google_api.spreadsheets import SpreedSheets
 from app.utils.json_shemas import JsonDish, JsonMenu, JsonSubmenu
 
@@ -7,9 +9,9 @@ class ExcelReader:
 
     def __init__(self) -> None:
         self.ss = SpreedSheets()
-        self.menus: list[list[str]] = []
+        self.menus: list[dict[str, Any]] = []
 
-    def get_menus(self) -> list[JsonMenu]:
+    def get_menus(self) -> list[dict[str, Any]]:
         """Возвращает заполненную json структуру меню ресторана."""
         self.__reader()
         return self.menus
@@ -33,7 +35,7 @@ class ExcelReader:
                 )
             # Подменю
             elif row[1]:
-                self.menus[-1]["submenus"].append(
+                self.menus[-1]['submenus'].append(
                     JsonSubmenu(
                         id=row[1],
                         title=row[2],
@@ -48,7 +50,7 @@ class ExcelReader:
                 if len(row) == 7:
                     discount = self.__get_discount(row[6])
 
-                self.menus[-1]["submenus"][-1]["dishes"].append(
+                self.menus[-1]['submenus'][-1]['dishes'].append(
                     JsonDish(
                         id=row[2],
                         title=row[3],
