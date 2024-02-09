@@ -11,7 +11,7 @@ from app.submenu.router import (
     show_submenu_by_id,
     show_submenus,
 )
-from app.tests.utils import reverse
+from app.utils.url import reverse
 
 
 async def test_add_menu(

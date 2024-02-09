@@ -12,7 +12,7 @@ from app.dish.router import (
 )
 from app.menu.router import add_menu, delete_menu
 from app.submenu.router import add_submenu, delete_submenu
-from app.tests.utils import reverse
+from app.utils.url import reverse
 
 
 async def test_add_menu(

@@ -11,7 +11,7 @@ from app.menu.router import (
     show_menus,
     update_menu,
 )
-from app.tests.utils import reverse
+from app.utils.url import reverse
 
 
 async def test_menus_is_empty(ac: AsyncClient) -> None:
