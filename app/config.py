@@ -1,6 +1,6 @@
 from typing import Literal
 
-from pydantic import FilePath
+from pydantic import EmailStr, FilePath
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -40,6 +40,11 @@ class Settings(BaseSettings):
     RABBITMQ_DEFAULT_PORT: int
     RABBITMQ_HOST: str
 
+    # Google Sheets API
+    API_CREDENTIALS_FILE: FilePath
+    EMAIL: EmailStr
+    SHEET_ID: str
+
     @property
     def DATABASE_URL(self) -> str:
         """URL адрес базы данных."""
@@ -68,6 +73,14 @@ class Settings(BaseSettings):
             f'amqp://{self.RABBITMQ_DEFAULT_USER}:{self.RABBITMQ_DEFAULT_PASS}'
             f'@{self.RABBITMQ_HOST}:{self.RABBITMQ_DEFAULT_PORT}'
         )
+
+    @property
+    def SCOPES(self) -> list[str]:
+        """Права доступа к API"""
+        return [
+            'https://www.googleapis.com/auth/spreadsheets',
+            'https://www.googleapis.com/auth/drive',
+        ]
 
     model_config = SettingsConfigDict(env_file='.env')
 

@@ -1,10 +1,10 @@
-from app.config import settings
 from celery import Celery
 
+from app.config import settings
 
 # celery --app=app.tasks.celery:celery worker -l INFO
 celery = Celery(
-    "tasks",
+    'tasks',
     broker=settings.RABITMQ_URL,
-    include=["app.tasks.tasks"],
+    include=['app.tasks.tasks'],
 )

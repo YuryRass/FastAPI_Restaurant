@@ -16,8 +16,6 @@ class DBUpdater:
         self.db_data: Any = self.__get_menus_full_list_from_db()
 
     def get_diff(self):
-        print(self.db_data)
-        print('\n\n')
         return diff(self.db_data, self.excel_data)
 
     def __get_menus_full_list_from_db(self) -> Any:
