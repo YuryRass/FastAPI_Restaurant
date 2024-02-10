@@ -1,11 +1,12 @@
-from contextlib import asynccontextmanager
+# from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
 from app.dish.router import router as dish_router
 from app.menu.router import router as menu_router
 from app.submenu.router import router as submenu_router
-from app.tasks.tasks import update_db
+
+# from app.tasks.tasks import update_db
 
 description = """
     FastAPI Restaurant API предоставляет комплексные решения для управления ресторанным меню,
@@ -29,10 +30,10 @@ tags_metadata = [
 ]
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    update_db.delay()
-    yield
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     update_db.delay()
+#     yield
 
 app: FastAPI = FastAPI(
     # lifespan=lifespan,

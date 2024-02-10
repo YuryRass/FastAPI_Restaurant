@@ -40,6 +40,40 @@ services:
     networks:
       - my_network
 
+  celery_service:
+    image: restaurant_app
+    container_name: restaurant_celery
+    command: >
+      sh -c "celery -A app.tasks.celery beat --loglevel=info &
+             celery -A app.tasks.celery worker --loglevel=info -B"
+    env_file:
+      - .env
+    depends_on:
+      restaurant_app:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - my_network
+
+  rabbitmq:
+    image: "rabbitmq:3-management-alpine"
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - "5672:5672"  # AMQP протокол
+      - "15672:15672"  # Веб-интерфейс RabbitMQ
+    networks:
+      - my_network
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 40s
+
   redis:
     image: redis:latest
     container_name: redis

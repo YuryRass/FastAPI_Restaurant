@@ -1,35 +1,34 @@
-"""Используя данную функцию я создавал таблицу в Google Sheets и получал ее ID."""
-
-# def create_spreadsheet(service: discovery.Resource) -> str:
-#     """Создание Google sheet таблицы."""
-#     # Тело spreadsheet
-#     spreadsheet_body = {
-#         # Свойства документа
-#         "properties": {"title": "Menu", "locale": "ru_RU"},
-#         # Свойства листов документа
-#         "sheets": [
-#             {
-#                 "properties": {
-#                     "sheetType": "GRID",
-#                     "sheetId": 0,
-#                     "title": "menu",
-#                     "gridProperties": {"columnCount": 7},
-#                 }
-#             }
-#         ],
-#     }
-
-#     request = service.spreadsheets().create(body=spreadsheet_body)
-#     response = request.execute()
-#     spreadsheet_id = response["spreadsheetId"]
-#     print("https://docs.google.com/spreadsheets/d/" + spreadsheet_id)
-#     return spreadsheet_id
-
-
 from google.oauth2.service_account import Credentials
 from googleapiclient import discovery
 
 from app.config import settings
+
+"""Используя данную функцию я создавал таблицу в Google Sheets и получал ее ID."""
+
+# def create_spreadsheet(service: discovery.Resource) -> str:
+#      """Создание Google sheet таблицы."""
+#      # Тело spreadsheet
+#      spreadsheet_body = {
+#          # Свойства документа
+#          "properties": {"title": "Menu", "locale": "ru_RU"},
+#          # Свойства листов документа
+#          "sheets": [
+#              {
+#                  "properties": {
+#                      "sheetType": "GRID",
+#                      "sheetId": 0,
+#                      "title": "menu",
+#                      "gridProperties": {"columnCount": 7},
+#                  }
+#              }
+#          ],
+#      }
+
+#      request = service.spreadsheets().create(body=spreadsheet_body)
+#      response = request.execute()
+#      spreadsheet_id = response["spreadsheetId"]
+#      print("https://docs.google.com/spreadsheets/d/" + spreadsheet_id)
+#      return spreadsheet_id
 
 
 class SpreedSheets:
@@ -38,7 +37,7 @@ class SpreedSheets:
 
     def get_values(self) -> list[list[str]]:
         """Получение данных таблицы из Google Sheets API."""
-        self.__set_user_permissions()
+        # self.__set_user_permissions() # TODO под него возможно необходима более высокая задержка
         values = self.__spreadsheet_get_values()
         return values
 
