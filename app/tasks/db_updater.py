@@ -7,6 +7,7 @@ from app.dish.model import Dish
 from app.menu.model import Menu
 from app.submenu.model import Submenu
 from app.utils.json_shemas import JsonDish, JsonMenu, JsonSubmenu
+from app.dao import ModelType
 
 
 class DBUpdater:
@@ -16,28 +17,35 @@ class DBUpdater:
         self.parser_data = parser_data
         self.base_url = settings.APP_LINK
 
-    def get_menus_from_db(self) -> list[str]:
-        """Получить список id всех существующих меню из базы."""
-        url = self.base_url + Menu.LINK
+    def get_models_id_from_db(self, model: ModelType, **kwargs) -> list[str]:
+        """Получить список всех существующих идентификаторов модели из БД."""
+        url = self.base_url + model.LINK.format(**kwargs)
         response = httpx.get(url).json()
         return [item['id'] for item in response]
 
-    def get_submenus_from_db(self, menu_id: uuid.UUID) -> list[str]:
-        """Получить список id всех существующих подменю из базы."""
-        url = self.base_url + Submenu.LINK.format(menu_id=menu_id)
-        response = httpx.get(url).json()
-        return [item['id'] for item in response]
 
-    def get_dishes_from_db(
-        self, menu_id: uuid.UUID, submenu_id: uuid.UUID
-    ) -> list[str]:
-        """Получить список id всех существующих блюд из базы."""
-        url = self.base_url + Dish.LINK.format(
-            menu_id=menu_id,
-            submenu_id=submenu_id,
-        )
-        response = httpx.get(url).json()
-        return [item['id'] for item in response]
+    # def get_menus_from_db(self) -> list[str]:
+    #     """Получить список id всех существующих меню из базы."""
+    #     url = self.base_url + Menu.LINK
+    #     response = httpx.get(url).json()
+    #     return [item['id'] for item in response]
+
+    # def get_submenus_from_db(self, menu_id: uuid.UUID) -> list[str]:
+    #     """Получить список id всех существующих подменю из базы."""
+    #     url = self.base_url + Submenu.LINK.format(menu_id=menu_id)
+    #     response = httpx.get(url).json()
+    #     return [item['id'] for item in response]
+
+    # def get_dishes_from_db(
+    #     self, menu_id: uuid.UUID, submenu_id: uuid.UUID
+    # ) -> list[str]:
+    #     """Получить список id всех существующих блюд из базы."""
+    #     url = self.base_url + Dish.LINK.format(
+    #         menu_id=menu_id,
+    #         submenu_id=submenu_id,
+    #     )
+    #     response = httpx.get(url).json()
+    #     return [item['id'] for item in response]
 
     def post_menu(self, menu: JsonMenu) -> None:
         """Запостить новое меню в базу."""
@@ -228,7 +236,8 @@ class DBUpdater:
     ) -> None:
         """Проверить состояние блюд в базе и привести
         в соответствие с файлом."""
-        dishes_id = self.get_dishes_from_db(
+        dishes_id = self.get_models_id_from_db(
+            Dish,
             menu_id=menu_id,
             submenu_id=submenu_id,
         )
@@ -256,7 +265,7 @@ class DBUpdater:
     ) -> None:
         """Проверить состояние подменю в базе и привести
         в соответствие с файлом."""
-        submenus_id = self.get_submenus_from_db(menu_id)
+        submenus_id = self.get_models_id_from_db(Submenu, menu_id=menu_id)
         for submenu in submenus:
             if str(submenu.id) not in submenus_id:
                 self.post_submenu(
@@ -289,7 +298,7 @@ class DBUpdater:
     def check_menus(self) -> None:
         """Проверить состояние меню в базе и привести
         в соответствие с файлом."""
-        menus_id = self.get_menus_from_db()
+        menus_id = self.get_models_id_from_db(model=Menu)
         for menu in self.parser_data:
             if menu.id not in menus_id:
                 self.post_menu(menu=menu)
