@@ -1,0 +1,19 @@
+# Используем официальный образ RabbitMQ
+FROM rabbitmq:3.9
+
+# Добавляем настройки для разрешения удаленных подключений
+# Не рекомендуется использовать "guest" в production, это только для тестовых целей
+RUN rabbitmq-plugins enable rabbitmq_management
+RUN echo "[{rabbit, [{loopback_users, []}]}]." > /etc/rabbitmq/rabbitmq.config
+
+# Устанавливаем переменную окружения для определения имени Docker Volume
+ENV RABBITMQ_MNESIA_BASE /var/lib/rabbitmq/mnesia
+
+# Открываем порт для удаленных подключений (обычно 5672)
+EXPOSE 5672
+
+# Открываем порт для RabbitMQ Management UI (обычно 15672)
+EXPOSE 15672
+
+# Запускаем RabbitMQ сервер при запуске контейнера
+CMD ["rabbitmq-server"]
