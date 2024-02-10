@@ -8,6 +8,7 @@ from app.menu.model import Menu
 from app.submenu.model import Submenu
 from app.utils.json_shemas import JsonDish, JsonMenu, JsonSubmenu
 from app.dao import ModelType
+from app.utils.json_shemas import JsonType
 
 
 class DBUpdater:
@@ -21,104 +22,105 @@ class DBUpdater:
         """Получить список всех существующих идентификаторов модели из БД."""
         url = self.base_url + model.LINK.format(**kwargs)
         response = httpx.get(url).json()
-        return [item['id'] for item in response]
+        return [item["id"] for item in response]
 
+    def add_model_data(
+        self,
+        model_type: ModelType,
+        json_data: JsonType,
+        **kwargs,
+    ) -> None:
+        """Добавить новые данные модели в БД."""
+        url = self.base_url + model_type.LINK.format(**kwargs)
+        data = {
+            "id": str(json_data.id),
+            "title": json_data.title,
+            "description": json_data.description,
+        }
+        if model_type == Dish:
+            data["price"] = str(json_data.price)
 
-    # def get_menus_from_db(self) -> list[str]:
-    #     """Получить список id всех существующих меню из базы."""
+        httpx.post(url, json=data)
+
+    # def post_menu(self, menu: JsonMenu) -> None:
+    #     """Запостить новое меню в базу."""
     #     url = self.base_url + Menu.LINK
-    #     response = httpx.get(url).json()
-    #     return [item['id'] for item in response]
+    #     data = {
+    #         "id": str(menu.id),
+    #         "title": menu.title,
+    #         "description": menu.description,
+    #     }
+    #     httpx.post(url, json=data)
 
-    # def get_submenus_from_db(self, menu_id: uuid.UUID) -> list[str]:
-    #     """Получить список id всех существующих подменю из базы."""
+    # def post_submenu(
+    #     self,
+    #     submenu: JsonSubmenu,
+    #     menu_id: uuid.UUID,
+    # ) -> None:
+    #     """Запостить новое подменю в базу."""
     #     url = self.base_url + Submenu.LINK.format(menu_id=menu_id)
-    #     response = httpx.get(url).json()
-    #     return [item['id'] for item in response]
+    #     data = {
+    #         "id": str(submenu.id),
+    #         "title": submenu.title,
+    #         "description": submenu.description,
+    #     }
+    #     httpx.post(url, json=data)
 
-    # def get_dishes_from_db(
-    #     self, menu_id: uuid.UUID, submenu_id: uuid.UUID
-    # ) -> list[str]:
-    #     """Получить список id всех существующих блюд из базы."""
+    # def post_dish(
+    #     self,
+    #     dish: JsonDish,
+    #     submenu_id: uuid.UUID,
+    #     menu_id: uuid.UUID,
+    # ) -> None:
+    #     """Запостить новое блюдо в базу."""
     #     url = self.base_url + Dish.LINK.format(
     #         menu_id=menu_id,
     #         submenu_id=submenu_id,
     #     )
-    #     response = httpx.get(url).json()
-    #     return [item['id'] for item in response]
+    #     data = {
+    #         "id": str(dish.id),
+    #         "title": dish.title,
+    #         "description": dish.description,
+    #         "price": str(dish.price),
+    #     }
+    # httpx.post(url, json=data)
 
-    def post_menu(self, menu: JsonMenu) -> None:
-        """Запостить новое меню в базу."""
-        url = self.base_url + Menu.LINK
-        data = {
-            'id': str(menu.id),
-            'title': menu.title,
-            'description': menu.description,
-        }
-        httpx.post(url, json=data)
-
-    def post_submenu(
-        self,
-        submenu: JsonSubmenu,
-        menu_id: uuid.UUID,
+    def add_models_batch(
+        self, model_type: ModelType, models_data: list[JsonType], **kwargs
     ) -> None:
-        """Запостить новое подменю в базу."""
-        url = self.base_url + Submenu.LINK.format(menu_id=menu_id)
-        data = {
-            'id': str(submenu.id),
-            'title': submenu.title,
-            'description': submenu.description,
-        }
-        httpx.post(url, json=data)
+        """Добавить новые данные моделей в БД списком."""
+        for model_data in models_data:
+            self.add_model_data(model_type, model_data, **kwargs)
 
-    def post_submenus_batch(
-        self, submenus: list[JsonSubmenu], menu_id: uuid.UUID
-    ) -> None:
-        """Запостить новые подменю в базу списком."""
-        for submenu in submenus:
-            self.post_submenu(
-                submenu=submenu,
-                menu_id=menu_id,
-            )
+    # def post_submenus_batch(
+    #     self, submenus: list[JsonSubmenu], menu_id: uuid.UUID
+    # ) -> None:
+    #     """Запостить новые подменю в базу списком."""
+    #     for submenu in submenus:
+    #         self.post_submenu(
+    #             submenu=submenu,
+    #             menu_id=menu_id,
+    #         )
 
-    def post_dish(
-        self,
-        dish: JsonDish,
-        submenu_id: uuid.UUID,
-        menu_id: uuid.UUID,
-    ) -> None:
-        """Запостить новое блюдо в базу."""
-        url = self.base_url + Dish.LINK.format(
-            menu_id=menu_id,
-            submenu_id=submenu_id,
-        )
-        data = {
-            'id': str(dish.id),
-            'title': dish.title,
-            'description': dish.description,
-            'price': str(dish.price),
-        }
-        httpx.post(url, json=data)
-
-    def post_dishes_batch(
-        self,
-        dishes: list[JsonDish],
-        submenu_id: uuid.UUID,
-        menu_id: uuid.UUID,
-    ) -> None:
-        """Запостить новые блюда в базу списком."""
-        for dish in dishes:
-            self.post_dish(
-                dish=dish,
-                submenu_id=submenu_id,
-                menu_id=menu_id,
-            )
+    # def post_dishes_batch(
+    #     self,
+    #     dishes: list[JsonDish],
+    #     submenu_id: uuid.UUID,
+    #     menu_id: uuid.UUID,
+    # ) -> None:
+    #     """Запостить новые блюда в базу списком."""
+    #     for dish in dishes:
+    #         self.post_dish(
+    #             dish=dish,
+    #             submenu_id=submenu_id,
+    #             menu_id=menu_id,
+    #         )
 
     def patch_menu(self, menu: JsonMenu) -> None:
         """Обновить данные о меню в базе."""
         data = {
-            'title': menu.title,
-            'description': menu.description,
+            "title": menu.title,
+            "description": menu.description,
         }
         url = self.base_url + Menu.LONG_LINK.format(menu_id=menu.id)
         httpx.patch(url, json=data)
@@ -127,8 +129,10 @@ class DBUpdater:
         """Проверить состояние меню в базе и по необходимости обновить."""
         url = self.base_url + Menu.LONG_LINK.format(menu_id=menu.id)
         current_menu = httpx.get(url).json()
-        if current_menu['title'] != menu.title or \
-                current_menu['description'] != menu.description:
+        if (
+            current_menu["title"] != menu.title
+            or current_menu["description"] != menu.description
+        ):
             self.patch_menu(menu=menu)
 
     def patch_submenu(
@@ -138,8 +142,8 @@ class DBUpdater:
     ) -> None:
         """Обновить данные о подменю в базе."""
         data = {
-            'title': submenu.title,
-            'description': submenu.description,
+            "title": submenu.title,
+            "description": submenu.description,
         }
         url = self.base_url + Submenu.LONG_LINK.format(
             menu_id=menu_id,
@@ -158,8 +162,10 @@ class DBUpdater:
             submenu_id=str(submenu.id),
         )
         current_submenu = httpx.get(url).json()
-        if current_submenu['title'] != submenu.title or \
-                current_submenu['description'] != submenu.description:
+        if (
+            current_submenu["title"] != submenu.title
+            or current_submenu["description"] != submenu.description
+        ):
             self.patch_submenu(submenu=submenu, menu_id=menu_id)
 
     def patch_dish(
@@ -170,9 +176,9 @@ class DBUpdater:
     ) -> None:
         """Обновить данные о блюде в базе."""
         data = {
-            'title': dish.title,
-            'description': dish.description,
-            'price': str(dish.price),
+            "title": dish.title,
+            "description": dish.description,
+            "price": str(dish.price),
         }
         url = self.base_url + Dish.LONG_LINK.format(
             menu_id=menu_id,
@@ -195,9 +201,11 @@ class DBUpdater:
         )
         current_dish = httpx.get(url).json()
 
-        if current_dish['title'] != dish.title or \
-            current_dish['description'] != dish.description or \
-                current_dish['price'] != str(dish.price):
+        if (
+            current_dish["title"] != dish.title
+            or current_dish["description"] != dish.description
+            or current_dish["price"] != str(dish.price)
+        ):
             self.patch_dish(
                 dish=dish,
                 submenu_id=submenu_id,
@@ -243,8 +251,9 @@ class DBUpdater:
         )
         for dish in dishes:
             if str(dish.id) not in dishes_id:
-                self.post_dish(
-                    dish=dish,
+                self.add_model_data(
+                    Dish,
+                    dish,
                     submenu_id=submenu_id,
                     menu_id=menu_id,
                 )
@@ -268,12 +277,10 @@ class DBUpdater:
         submenus_id = self.get_models_id_from_db(Submenu, menu_id=menu_id)
         for submenu in submenus:
             if str(submenu.id) not in submenus_id:
-                self.post_submenu(
-                    submenu=submenu,
-                    menu_id=menu_id,
-                )
-                self.post_dishes_batch(
-                    dishes=submenu.dishes,
+                self.add_model_data(Submenu, submenu, menu_id=menu_id)
+                self.add_models_batch(
+                    Dish,
+                    submenu.dishes,
                     submenu_id=submenu.id,
                     menu_id=menu_id,
                 )
@@ -301,27 +308,29 @@ class DBUpdater:
         menus_id = self.get_models_id_from_db(model=Menu)
         for menu in self.parser_data:
             if menu.id not in menus_id:
-                self.post_menu(menu=menu)
-                self.post_submenus_batch(
-                    submenus=menu.submenus,
+                self.add_model_data(Menu, menu)
+                self.add_models_batch(
+                    Submenu,
+                    menu.submenus,
                     menu_id=menu.id,
                 )
                 for submenu in menu.submenus:
-                    self.post_dishes_batch(
-                        dishes=submenu.dishes,
+                    self.add_models_batch(
+                        Dish,
+                        submenu.dishes,
                         submenu_id=submenu.id,
                         menu_id=menu.id,
                     )
-            else:
-                self.check_menu(menu=menu)
-                if menu.submenus:
-                    self.check_submenus(
-                        submenus=menu.submenus,
-                        menu_id=menu.id,
-                    )
-                menus_id.remove(str(menu.id))
-        for i in menus_id:
-            self.delete_menu(menu_id=i)
+        #     else:
+        #         self.check_menu(menu=menu)
+        #         if menu.submenus:
+        #             self.check_submenus(
+        #                 submenus=menu.submenus,
+        #                 menu_id=menu.id,
+        #             )
+        #         menus_id.remove(str(menu.id))
+        # for i in menus_id:
+        #     self.delete_menu(menu_id=i)
 
     def run(self) -> None:
         """Запустить обновление данных в базе."""

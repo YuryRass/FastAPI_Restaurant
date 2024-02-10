@@ -60,8 +60,6 @@ class ExcelReader:
                         ),
                     )
                 )
-        # print('self.menus', self.menus_json)
-        # print('menus', self.menus_schema)
 
     def __get_discount(self, discount: str | None) -> int | None:
         """Проверка и получение скидки на блюдо."""
