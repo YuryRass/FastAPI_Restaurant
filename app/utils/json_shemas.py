@@ -1,4 +1,5 @@
 from typing import TypeVar
+
 from pydantic import UUID4, BaseModel
 
 
@@ -24,5 +25,6 @@ class JsonMenu(BaseModel):
     title: str
     description: str
     submenus: list[JsonSubmenu]
+
 
 JsonType = TypeVar('JsonType', JsonDish, JsonMenu, JsonSubmenu)

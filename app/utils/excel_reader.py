@@ -54,7 +54,7 @@ class ExcelReader:
                         title=row[3],
                         description=row[4],
                         price=(
-                            float(row[5].replace(',', '.')) * discount
+                            float(row[5].replace(',', '.')) * (1 - discount / 100)
                             if discount
                             else float(row[5].replace(',', '.'))
                         ),

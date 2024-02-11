@@ -5,31 +5,6 @@ from app.config import settings
 
 """Используя данную функцию я создавал таблицу в Google Sheets и получал ее ID."""
 
-# def create_spreadsheet(service: discovery.Resource) -> str:
-#      """Создание Google sheet таблицы."""
-#      # Тело spreadsheet
-#      spreadsheet_body = {
-#          # Свойства документа
-#          "properties": {"title": "Menu", "locale": "ru_RU"},
-#          # Свойства листов документа
-#          "sheets": [
-#              {
-#                  "properties": {
-#                      "sheetType": "GRID",
-#                      "sheetId": 0,
-#                      "title": "menu",
-#                      "gridProperties": {"columnCount": 7},
-#                  }
-#              }
-#          ],
-#      }
-
-#      request = service.spreadsheets().create(body=spreadsheet_body)
-#      response = request.execute()
-#      spreadsheet_id = response["spreadsheetId"]
-#      print("https://docs.google.com/spreadsheets/d/" + spreadsheet_id)
-#      return spreadsheet_id
-
 
 class SpreedSheets:
     def __init__(self) -> None:
@@ -40,6 +15,31 @@ class SpreedSheets:
         # self.__set_user_permissions() # TODO под него возможно необходима более высокая задержка
         values = self.__spreadsheet_get_values()
         return values
+
+    def create_spreadsheet(self) -> str:
+        """Создание Google sheet таблицы."""
+        # Тело spreadsheet
+        spreadsheet_body = {
+            # Свойства документа
+            'properties': {'title': 'Menu', 'locale': 'ru_RU'},
+            # Свойства листов документа
+            'sheets': [
+                {
+                    'properties': {
+                        'sheetType': 'GRID',
+                        'sheetId': 0,
+                        'title': 'menu',
+                        'gridProperties': {'columnCount': 7},
+                    }
+                }
+            ],
+        }
+
+        request = self.service.spreadsheets().create(body=spreadsheet_body)
+        response = request.execute()
+        spreadsheet_id = response['spreadsheetId']
+        print('https://docs.google.com/spreadsheets/d/' + spreadsheet_id)
+        return spreadsheet_id
 
     def __auth(self) -> tuple[discovery.Resource, Credentials]:
         """Авторизация в Google."""
