@@ -1,6 +1,7 @@
+import uuid
 from enum import Enum
 from typing import Any
-import uuid
+
 import httpx
 
 from app.config import settings
