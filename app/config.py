@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     """Настройка приложения."""
 
     MODE: Literal['DEV', 'TEST']
+    CELERY_RUN: bool
 
     # данные для базы данных PostgreSQL
     DB_HOST: str

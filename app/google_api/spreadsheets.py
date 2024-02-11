@@ -7,6 +7,8 @@ from app.config import settings
 
 
 class SpreadSheets:
+    """Работа с Google Sheets API."""
+
     def __init__(self) -> None:
         self.service, self.credentials = self.__auth()
 

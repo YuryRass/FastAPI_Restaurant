@@ -30,6 +30,7 @@ services:
     container_name: rest_app
     env_file:
       - .env
+    command: /project/docker/run.sh
     depends_on:
       db:
         condition: service_healthy
@@ -43,9 +44,7 @@ services:
   celery_service:
     image: restaurant_app
     container_name: restaurant_celery
-    command: >
-      sh -c "celery -A app.tasks.celery beat --loglevel=info &
-             celery -A app.tasks.celery worker --loglevel=info -B"
+    command: /project/docker/celery_run.sh
     env_file:
       - .env
     depends_on:
