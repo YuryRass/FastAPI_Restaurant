@@ -49,17 +49,17 @@ class ExcelReader:
                 discount = None
                 if len(row) == 7:
                     discount = self.__get_discount(row[6])
-
+                new_price = (
+                    float(row[5].replace(',', '.')) * (1 - discount / 100)
+                    if discount
+                    else float(row[5].replace(',', '.'))
+                )
                 self.menus_schema[-1].submenus[-1].dishes.append(
                     JsonDish(
                         id=row[2],
                         title=row[3],
                         description=row[4],
-                        price=(
-                            float(row[5].replace(',', '.')) * (1 - discount / 100)
-                            if discount
-                            else float(row[5].replace(',', '.'))
-                        ),
+                        price=round(new_price, 2),
                     )
                 )
 
