@@ -44,6 +44,7 @@ class SpreadSheets:
         response = request.execute()
         spreadsheet_id = response['spreadsheetId']
         print('https://docs.google.com/spreadsheets/d/' + spreadsheet_id)
+        self.__set_user_permissions(spreadsheet_id)
         return spreadsheet_id
 
     def __auth(self) -> tuple[discovery.Resource, Credentials]:
@@ -57,7 +58,7 @@ class SpreadSheets:
         service = discovery.build('sheets', 'v4', credentials=credentials)
         return service, credentials
 
-    def __set_user_permissions(self) -> None:
+    def __set_user_permissions(self, sheet_id: str = settings.SHEET_ID) -> None:
         """Установка прав доступа."""
         permissions_body = {
             'type': 'user',  # Тип учетных данных.
@@ -70,7 +71,7 @@ class SpreadSheets:
 
         # Формируется и сразу выполняется запрос на выдачу прав вашему аккаунту.
         drive_service.permissions().create(
-            fileId=settings.SHEET_ID, body=permissions_body, fields='id'
+            fileId=sheet_id, body=permissions_body, fields='id'
         ).execute()
 
     def __spreadsheet_get_values(self) -> list[list[str]] | None:
