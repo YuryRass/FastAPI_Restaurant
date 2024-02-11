@@ -30,6 +30,7 @@ services:
     container_name: test_rest_app
     env_file:
       - .env_test
+    command: /project/docker/run.sh
     depends_on:
       test_db:
         condition: service_healthy
@@ -52,7 +53,7 @@ services:
     env_file:
       - .env_test
     healthcheck:
-      test: redis-cli ping | grep PONG
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
       interval: 1s
       timeout: 3s
       retries: 5
