@@ -33,7 +33,7 @@
     * Обновление данных в БД в соответсвии с google sheets выполнено в методе [run()](app/tasks/db_updater.py) класса `DBUpdater`.
     * Фоновая задача обновления БД (раз в 15 секунд): [update_db()](app/tasks/tasks.py)
 
-6. В удаленной таблице goole sheets в столбце G указывается размер скидки (в процентах %), которая учитывается при отображении цены на блюдо.
+6. В таблице google sheets в столбце G указывается размер скидки (в процентах %), которая учитывается при отображении цены на блюдо в ендпоинтах.
 
 ### Стартовая конфигурация системы
 Перед запуском приложения либо тестов убедитесь в наличии в
@@ -41,7 +41,7 @@
 
 * **MODE** = DEV
   > режим запуска приложения (TEST - тестовый; DEV - основной)
-* APP_LINK = http://restaurant_app:8000/api/v1
+* **APP_LINK** = http://restaurant_app:8000/api/v1
   > основной адрес приложения для работы со всеми эндпоинтами
 * **CELERY_RUN** = false
   > флаг запуска обработчика сообщений Celery (true | false)
@@ -77,10 +77,10 @@
   > порт для RabbitMQ
 * **RABBITMQ_HOST** = rabbitmq
   > хост для RabbitMQ
-  * **API_CREDENTIALS_FILE** = credentials.json
+* **API_CREDENTIALS_FILE** = credentials.json
   > JSON-файл с информацией о вашем сервисном аккаунте, его приватный ключ, ID и ссылки для авторизации…
 * **EMAIL** = example@mail.ru
-  > адрес электронной почты, которая привязана Google API
+  > адрес электронной почты, которая привязана к Google Cloud Platform
 * **SHEET_ID** = 1iqEWKFfWqlchjbbKmGcZ1-P-.....
   > идентификатор страницы в google sheets
 
@@ -98,7 +98,7 @@ git clone https://github.com/YuryRass/FastAPI_Restaurant.git
 cd FastAPI_Restaurant
 ```
 
-Далее необходимо добавить в корень проекта свой собственный JSON-файл `credentials.json` с ключом доступа к сервисному аккаунту в Google Cloud Platform. Структруа данного JSON-файла находится в файле [credentials.example.json](credentials.example.json)
+Далее необходимо добавить в корень проекта свой собственный JSON-файл `credentials.json` с ключом доступа к сервисному аккаунту в Google Cloud Platform. Структура данного JSON-файла находится в файле [credentials.example.json](credentials.example.json)
 
 Порядок создания JSON-файла с ключом доступа к сервисному аккаунту в Google Cloud Platform показан [внизу](#credentials)
 
@@ -174,7 +174,7 @@ docker compose -f docker-compose-test.yml up -d --build --remove-orphans && dock
 Убедитесь в этом: перейдите на экран Enabled APIs & Services, проскролльте экран до списка API и перейдите сначала к Google Sheets API, а потом к Google Drive API. Посмотрите, подключился ли к ним сервисный аккаунт. Это можно сделать на вкладке Credentials, сервисный аккаунт должен отобразиться внизу:
 ![](readme_images/service_account_6.JPG)
 
-Осталось получить JSON-файл с ключом доступа к сервисному аккаунту и можно будет отвлечься от интерфейсных дебрей Google Cloude Platform.
+Осталось получить JSON-файл с ключом доступа к сервисному аккаунту.
 
 Перейдите на экран Credentials, нажмите на строчку с названием вашего сервисного аккаунта, чтобы попасть в его настройки. Нажмите Keys – Add Key – Create New Key, чтобы создать ключ доступа к вашему сервисному аккаунту:
 ![](readme_images/service_account_7.JPG)
@@ -183,7 +183,7 @@ docker compose -f docker-compose-test.yml up -d --build --remove-orphans && dock
 На ваш компьютер скачается JSON-файл с информацией о вашем сервисном аккаунте, его приватный ключ, ID и ссылки для авторизации, а на платформе активируется бессрочный ключ:
 ![](readme_images/service_account_9.JPG)
 
-```Переместите JSON-файл в надёжное место и никому не передавайте!```
+Переместите JSON-файл в надёжное место и никому не передавайте!
 
 ## Контакты
 
