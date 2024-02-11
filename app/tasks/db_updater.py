@@ -22,7 +22,7 @@ class DBUpdater:
 
     def __init__(self, parser_data: list[JsonMenu]):
         self.parser_data = parser_data
-        self.base_url = settings.APP_LINK
+        self.base_url = str(settings.APP_LINK)
         self.models_dict: dict[str, Any] = {
             DBModel.dish: Dish,
             DBModel.menu: Menu,
@@ -60,121 +60,30 @@ class DBUpdater:
         for model_data in models_data:
             self.add_model_data(model, model_data, **kwargs)
 
-    def patch_menu(self, menu: JsonMenu) -> None:
-        """Обновить данные о меню в базе."""
-        data = {
-            'title': menu.title,
-            'description': menu.description,
-        }
-        url = self.base_url + Menu.LONG_LINK.format(menu_id=menu.id)
+    def update_model(self, model: str, model_data: JsonType, **kwargs) -> None:
+        """Обновить данные модели в БД."""
+        data = {'title': model_data.title, 'description': model_data.description}
+        if model == DBModel.dish:
+            data['price'] = str(model_data.price)
+        url = self.base_url + self.models_dict[model].LONG_LINK.format(**kwargs)
         httpx.patch(url, json=data)
 
-    def check_menu(self, menu: JsonMenu) -> None:
-        """Проверить состояние меню в базе и по необходимости обновить."""
-        url = self.base_url + Menu.LONG_LINK.format(menu_id=menu.id)
-        current_menu = httpx.get(url).json()
-        if (
-            current_menu['title'] != menu.title or current_menu['description'] != menu.description
-        ):
-            self.patch_menu(menu=menu)
+    def check_model(self, model: str, model_data: JsonType, **kwargs) -> None:
+        """Проверка состояния модели в БД и при необходимости ее обновление."""
+        url = self.base_url + self.models_dict[model].LONG_LINK.format(**kwargs)
+        current_model = httpx.get(url).json()
+        conditions_for_update = [
+            current_model['title'] != model_data.title,
+            current_model['description'] != model_data.description,
+            model == DBModel.dish and current_model['price'] != str(model_data.price),
+        ]
 
-    def patch_submenu(
-        self,
-        submenu: JsonSubmenu,
-        menu_id: uuid.UUID,
-    ) -> None:
-        """Обновить данные о подменю в базе."""
-        data = {
-            'title': submenu.title,
-            'description': submenu.description,
-        }
-        url = self.base_url + Submenu.LONG_LINK.format(
-            menu_id=menu_id,
-            submenu_id=str(submenu.id),
-        )
-        httpx.patch(url, json=data)
+        if any(conditions_for_update):
+            self.update_model(model, model_data, **kwargs)
 
-    def check_submenu(
-        self,
-        submenu: JsonSubmenu,
-        menu_id: uuid.UUID,
-    ) -> None:
-        """Проверить состояние подменю в базе и по необходимости обновить."""
-        url = self.base_url + Submenu.LONG_LINK.format(
-            menu_id=menu_id,
-            submenu_id=str(submenu.id),
-        )
-        current_submenu = httpx.get(url).json()
-        if (
-            current_submenu['title'] != submenu.title or current_submenu['description'] != submenu.description
-        ):
-            self.patch_submenu(submenu=submenu, menu_id=menu_id)
-
-    def patch_dish(
-        self,
-        dish: JsonDish,
-        submenu_id: uuid.UUID,
-        menu_id: uuid.UUID,
-    ) -> None:
-        """Обновить данные о блюде в базе."""
-        data = {
-            'title': dish.title,
-            'description': dish.description,
-            'price': str(dish.price),
-        }
-        url = self.base_url + Dish.LONG_LINK.format(
-            menu_id=menu_id,
-            submenu_id=submenu_id,
-            dish_id=dish.id,
-        )
-        httpx.patch(url, json=data)
-
-    def check_dish(
-        self,
-        dish: JsonDish,
-        submenu_id: uuid.UUID,
-        menu_id: uuid.UUID,
-    ) -> None:
-        """Проверить состояние блюда в базе и по необходимости обновить."""
-        url = self.base_url + Dish.LONG_LINK.format(
-            menu_id=menu_id,
-            submenu_id=submenu_id,
-            dish_id=dish.id,
-        )
-        current_dish = httpx.get(url).json()
-
-        if (
-            current_dish['title'] != dish.title or current_dish['description'] != dish.description or current_dish['price'] != str(
-                dish.price)
-        ):
-            self.patch_dish(
-                dish=dish,
-                submenu_id=submenu_id,
-                menu_id=menu_id,
-            )
-
-    def delete_menu(self, menu_id: uuid.UUID) -> None:
-        """Удалить меню из базы."""
-        url = self.base_url + Menu.LONG_LINK.format(menu_id=menu_id)
-        httpx.delete(url)
-
-    def delete_submenu(self, submenu_id: uuid.UUID, menu_id: uuid.UUID) -> None:
-        """Удалить подменю из базы."""
-        url = self.base_url + Submenu.LONG_LINK.format(
-            menu_id=menu_id,
-            submenu_id=submenu_id,
-        )
-        httpx.delete(url)
-
-    def delete_dish(
-        self, dish_id: uuid.UUID, menu_id: uuid.UUID, submenu_id: uuid.UUID
-    ) -> None:
-        """Удалить блюдо из базы."""
-        url = self.base_url + Dish.LONG_LINK.format(
-            menu_id=menu_id,
-            submenu_id=submenu_id,
-            dish_id=dish_id,
-        )
+    def delete_record_from_model(self, model: str, **kwargs) -> None:
+        """Удалить запись из модели."""
+        url = self.base_url + self.models_dict[model].LONG_LINK.format(**kwargs)
         httpx.delete(url)
 
     def check_dishes(
@@ -199,13 +108,20 @@ class DBUpdater:
                     menu_id=menu_id,
                 )
             else:
-                self.check_dish(dish, submenu_id, menu_id)
+                self.check_model(
+                    DBModel.dish,
+                    dish,
+                    menu_id=menu_id,
+                    submenu_id=submenu_id,
+                    dish_id=dish.id,
+                )
                 dishes_id.remove(dish.id)
-        for id in dishes_id:
-            self.delete_dish(
-                dish_id=id,
+        for id_ in dishes_id:
+            self.delete_record_from_model(
+                DBModel.dish,
                 menu_id=menu_id,
                 submenu_id=submenu_id,
+                dish_id=id_,
             )
 
     def check_submenus(
@@ -226,9 +142,11 @@ class DBUpdater:
                     menu_id=menu_id,
                 )
             else:
-                self.check_submenu(
-                    submenu=submenu,
+                self.check_model(
+                    DBModel.submenu,
+                    submenu,
                     menu_id=menu_id,
+                    submenu_id=submenu.id,
                 )
                 if submenu.dishes:
                     self.check_dishes(
@@ -237,10 +155,9 @@ class DBUpdater:
                         submenu_id=submenu.id,
                     )
                 submenus_id.remove(submenu.id)
-        for id in submenus_id:
-            self.delete_submenu(
-                submenu_id=id,
-                menu_id=menu_id,
+        for id_ in submenus_id:
+            self.delete_record_from_model(
+                DBModel.submenu, menu_id=menu_id, submenu_id=id_
             )
 
     def check_menus(self) -> None:
@@ -263,16 +180,16 @@ class DBUpdater:
                         menu_id=menu.id,
                     )
             else:
-                self.check_menu(menu=menu)
+                self.check_model(DBModel.menu, menu, menu_id=menu.id)
                 if menu.submenus:
                     self.check_submenus(
                         submenus=menu.submenus,
                         menu_id=menu.id,
                     )
                 menus_id.remove(menu.id)
-        for i in menus_id:
-            self.delete_menu(menu_id=i)
+        for id_ in menus_id:
+            self.delete_record_from_model(DBModel.menu, menu_id=id_)
 
     def run(self) -> None:
-        """Запустить обновление данных в базе."""
+        """Запустить обновление данных в БД."""
         self.check_menus()

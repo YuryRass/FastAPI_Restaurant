@@ -1,23 +1,26 @@
+from typing import Any
+
 from google.oauth2.service_account import Credentials
 from googleapiclient import discovery
 
 from app.config import settings
 
-"""Используя данную функцию я создавал таблицу в Google Sheets и получал ее ID."""
 
-
-class SpreedSheets:
+class SpreadSheets:
     def __init__(self) -> None:
         self.service, self.credentials = self.__auth()
 
-    def get_values(self) -> list[list[str]]:
+    def get_values(self) -> list[list[str]] | None:
         """Получение данных таблицы из Google Sheets API."""
-        # self.__set_user_permissions() # TODO под него возможно необходима более высокая задержка
+        # self.__set_user_permissions() <- используется, если нет прав доступа
         values = self.__spreadsheet_get_values()
         return values
 
     def create_spreadsheet(self) -> str:
-        """Создание Google sheet таблицы."""
+        """
+        Создание Google sheet таблицы.
+        Используя данную функцию я создавал таблицу в Google Sheets и получал ее ID.
+        """
         # Тело spreadsheet
         spreadsheet_body = {
             # Свойства документа
@@ -68,7 +71,7 @@ class SpreedSheets:
             fileId=settings.SHEET_ID, body=permissions_body, fields='id'
         ).execute()
 
-    def __spreadsheet_get_values(self) -> list[list[str]]:
+    def __spreadsheet_get_values(self) -> list[list[str]] | None:
         """Возвращение данных таблицы из Google Sheets API."""
         # Формирование запроса к Google Sheets API.
         request = (
@@ -81,5 +84,5 @@ class SpreedSheets:
             )
         )
         # Выполнение запроса и возвращение данных
-        res = request.execute()
-        return res['values']
+        res: dict[str, Any] = request.execute()
+        return res.get('values')

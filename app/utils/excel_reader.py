@@ -1,4 +1,4 @@
-from app.google_api.spreadsheets import SpreedSheets
+from app.google_api.spreadsheets import SpreadSheets
 from app.utils.json_shemas import JsonDish, JsonMenu, JsonSubmenu
 
 
@@ -6,7 +6,7 @@ class ExcelReader:
     """Чтение данных из удаленного Excel файла."""
 
     def __init__(self) -> None:
-        self.ss = SpreedSheets()
+        self.ss = SpreadSheets()
         self.menus_schema: list[JsonMenu] = []
 
     def get_menus(self) -> list[JsonMenu]:
@@ -17,10 +17,12 @@ class ExcelReader:
     def __reader(self) -> None:
         """
         Считывает данные всех меню ресторана из удаленного
-        excel файла и сохраняет их в json структуре..
+        excel файла и сохраняет их в json структуре.
         """
-        list_data = self.ss.get_values()
-        for row in list_data:
+        remote_data = self.ss.get_values()
+        if remote_data is None:
+            return
+        for row in remote_data:
             # Меню
             if row[0]:
                 self.menus_schema.append(

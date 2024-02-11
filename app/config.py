@@ -1,6 +1,6 @@
 from typing import Literal
 
-from pydantic import EmailStr, FilePath
+from pydantic import EmailStr, FilePath, HttpUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     # Excel файл с данными о меню
     EXCEL_PATH: FilePath = 'app/admin/Menu.xlsx'
 
-    APP_LINK: str = 'http://localhost:8000/api/v1'
+    APP_LINK: HttpUrl
 
     RABBITMQ_DEFAULT_USER: str
     RABBITMQ_DEFAULT_PASS: str

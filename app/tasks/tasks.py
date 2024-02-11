@@ -1,13 +1,13 @@
-# from app.tasks.celery import celery
+from app.tasks.celery import celery
 from app.tasks.db_updater import DBUpdater
 
 # from app.tasks.excel_writer import ExcelWorker
 from app.utils.excel_reader import ExcelReader
 
 
-# @celery.task
+@celery.task
 def update_db() -> None:
-    """Обновление данных в БД из excel файла."""
+    """Обновление данных в БД из удаленного excel файла."""
     try:
         print('Запуск задачи обновления БД')
         er = ExcelReader()
