@@ -1,4 +1,5 @@
-from redis import ConnectionPool, Redis # type: ignore
+from redis import ConnectionPool, Redis  # type: ignore
+
 from app.config import settings
 
 

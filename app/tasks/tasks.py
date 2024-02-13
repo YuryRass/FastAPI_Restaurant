@@ -19,6 +19,6 @@ async def update():
 def update_db() -> None:
     """Обновление данных в БД из удаленного excel файла."""
     try:
-        return asyncio.run(update())
+        return loop.run_until_complete(update())
     except Exception as exc:
         logging.error(exc)
