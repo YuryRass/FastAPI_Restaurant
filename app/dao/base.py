@@ -2,7 +2,7 @@
 import uuid
 from typing import Generic
 
-from sqlalchemy import delete, insert, update
+from sqlalchemy import delete, insert, select, update
 from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -15,6 +15,15 @@ class BaseDAO(Generic[ModelType]):
     model: type[ModelType]
 
     @classmethod
+    async def get_by_id(cls, model_id: uuid.UUID) -> RowMapping | None:
+        """Получение записи в модели по ее ID."""
+        session: AsyncSession
+        async with async_session() as session:
+            stmt = select(cls.model.__table__.columns).where(cls.model.id == model_id)
+            result = await session.execute(stmt)
+            return result.mappings().one_or_none()
+
+    @classmethod
     async def add(cls, **data) -> RowMapping:
         """Добавление записи в модель."""
         assert cls.model is not None
@@ -24,6 +33,16 @@ class BaseDAO(Generic[ModelType]):
             result = await session.execute(stmt)
             await session.commit()
             return result.mappings().one()
+
+    @classmethod
+    async def get_identifiers(cls) -> list[uuid.UUID]:
+        """Получение всех ID модели."""
+        assert cls.model is not None
+        stmt = select(cls.model.id).select_from(cls.model)
+        session: AsyncSession
+        async with async_session() as session:
+            result = await session.execute(stmt)
+            return result.scalars().fetchall()
 
     @classmethod
     async def update(cls, model_id: uuid.UUID, **data) -> RowMapping:

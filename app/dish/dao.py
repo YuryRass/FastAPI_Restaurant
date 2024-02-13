@@ -22,7 +22,7 @@ class DishDAO(BaseDAO):
         cls,
         menu_id: uuid.UUID,
         submenu_id: uuid.UUID,
-        dish_id: uuid.UUID | None = None,
+        dish_id: uuid.UUID,
     ) -> Dish:
         """Отображение блюда."""
         session: AsyncSession
@@ -36,33 +36,59 @@ class DishDAO(BaseDAO):
             return res
 
     @classmethod
+    async def show_all(
+        cls,
+        menu_id: uuid.UUID,
+        submenu_id: uuid.UUID,
+    ) -> list[Dish]:
+        """Отображение списка блюд."""
+        session: AsyncSession
+        async with async_session() as session:
+            res = await cls.__get_dishes_info(
+                session,
+                menu_id,
+                submenu_id,
+            )
+            return res
+
+    @classmethod
     async def __get_dish_info(
         cls,
         session: AsyncSession,
         menu_id: uuid.UUID,
         submenu_id: uuid.UUID,
-        dish_id: uuid.UUID | None = None,
+        dish_id: uuid.UUID,
     ) -> Dish:
         """Составление и исполнение запроса о выводе блюда."""
-        stmt = cls.__get_dish_info_query(menu_id, submenu_id)
-
-        if dish_id:
-            stmt = stmt.where(cls.dish_alias.id == dish_id)
-
+        stmt = (
+            cls.__get_dishes_info_query(menu_id, submenu_id)
+            .where(cls.dish_alias.id == dish_id)
+        )
         result = await session.execute(stmt)
-        await session.commit()
-        if not dish_id:
-            return result.mappings().all()
-        else:
-            return result.mappings().one_or_none()
+        res = result.mappings().all()
+        if res:
+            return res[0]
+        return res
 
     @classmethod
-    def __get_dish_info_query(
+    async def __get_dishes_info(
+        cls,
+        session: AsyncSession,
+        menu_id: uuid.UUID,
+        submenu_id: uuid.UUID,
+    ) -> list[Dish]:
+        stmt = cls.__get_dishes_info_query(menu_id, submenu_id)
+
+        result = await session.execute(stmt)
+        return result.mappings().all()
+
+    @classmethod
+    def __get_dishes_info_query(
         cls,
         menu_id: uuid.UUID,
         submenu_id: uuid.UUID,
     ) -> Select[tuple[uuid.UUID, str, str | None, float]]:
-        """Получение запроса о выводе блюда."""
+        """Получение запроса о выводе блюд."""
         return (
             select(
                 cls.dish_alias.id,

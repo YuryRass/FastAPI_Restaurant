@@ -1,7 +1,14 @@
+import asyncio
 import uuid
+from contextlib import asynccontextmanager
 
 from sqlalchemy import NullPool
-from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    async_scoped_session,
+    async_sessionmaker,
+    create_async_engine,
+)
 from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
 
 from app.config import settings
@@ -11,17 +18,35 @@ if settings.MODE == 'TEST':
     DATABASE_PARAMS = {'poolclass': NullPool}
 else:
     DATABASE_URL = settings.DATABASE_URL
-    DATABASE_PARAMS = {}
+    DATABASE_PARAMS = {'pool_recycle': 3600, 'pool_size': 10}
+
 
 async_engine: AsyncEngine = create_async_engine(DATABASE_URL, **DATABASE_PARAMS)
 
-async_session: async_sessionmaker = async_sessionmaker(
-    async_engine, expire_on_commit=False
+async_session_: async_sessionmaker = async_sessionmaker(
+    async_engine,
+    expire_on_commit=False,
+    autocommit=False,
+    autoflush=False,
 )
+
+
+@asynccontextmanager
+async def async_session():
+    scoped_factory = async_scoped_session(
+        async_session_,
+        scopefunc=asyncio.current_task,
+    )
+    try:
+        async with scoped_factory() as s:
+            yield s
+    finally:
+        await scoped_factory.remove()
 
 
 class Base(DeclarativeBase):
     """Базовый класс для декларативных определений классов."""
+
     __abstract__ = True
 
     @declared_attr.directive

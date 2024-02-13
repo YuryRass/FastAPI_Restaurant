@@ -85,7 +85,7 @@ class DishService:
         )
         if res is not None:
             return res
-        dishes = await DishDAO.show(menu_id, submenu_id)
+        dishes = await DishDAO.show_all(menu_id, submenu_id)
         background_task.add_task(
             RedisDishDAO.set_all,
             dishes,

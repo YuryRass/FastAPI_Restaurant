@@ -1,6 +1,7 @@
 import uuid
+from typing import Any
 
-from sqlalchemy import and_, func, select
+from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 
@@ -13,13 +14,25 @@ from app.submenu.model import Submenu
 class SubmenuDAO(BaseDAO):
     """CRUD операции для подменю."""
     model = Submenu
+    submenu_alias = aliased(Submenu)
+    dish_alias = aliased(Dish)
 
     @classmethod
-    async def show(
+    async def show_all(
         cls,
         menu_id: uuid.UUID,
-        submenu_id: uuid.UUID | None = None,
-    ) -> Submenu:
+    ) -> list[Submenu]:
+        """Отображение списка подменю."""
+        session: AsyncSession
+        async with async_session() as session:
+            result = await cls.__get_submenus_info(
+                session,
+                menu_id,
+            )
+            return result
+
+    @classmethod
+    async def show(cls, menu_id: uuid.UUID, submenu_id: uuid.UUID) -> Submenu:
         """Отображение подменю."""
         session: AsyncSession
         async with async_session() as session:
@@ -28,7 +41,6 @@ class SubmenuDAO(BaseDAO):
                 menu_id,
                 submenu_id,
             )
-
             return result
 
     @classmethod
@@ -36,44 +48,67 @@ class SubmenuDAO(BaseDAO):
         cls,
         session: AsyncSession,
         menu_id: uuid.UUID,
-        submenu_id: uuid.UUID | None = None,
+        submenu_id: uuid.UUID,
     ) -> Submenu:
-        """Составление и исполнение запроса об отображении блюда."""
-        submenu_alias = aliased(Submenu)
-        dish_alias = aliased(Dish)
+        """Исполнение запроса об отображении подменю."""
+        stmt = cls.__get_submenu_query(menu_id, submenu_id)
 
-        # условие проверки на равенство submenu_id
-        is_submenu_id = True
-        if submenu_id:
-            is_submenu_id = submenu_alias.id == submenu_id
+        result = await session.execute(stmt)
+        submenu_res = result.mappings().all()
+        if submenu_res:
+            return submenu_res[0]
+        return submenu_res
+
+    @classmethod
+    async def __get_submenus_info(
+        cls,
+        session: AsyncSession,
+        menu_id: uuid.UUID,
+    ) -> list[Submenu]:
+        """Исполнение запроса об отображении списка подменю."""
+        stmt = cls.__get_submenus_query(menu_id)
+
+        result = await session.execute(stmt)
+        submenu_res = result.mappings().all()
+
+        return submenu_res
+
+    @classmethod
+    def __get_submenu_query(
+        cls,
+        menu_id: uuid.UUID,
+        submenu_id: uuid.UUID,
+    ) -> Select[tuple[uuid.UUID, str, str | None, Any]]:
+        """Запрос на получение подменю."""
+        stmt = cls.__get_submenus_query(menu_id)
+        stmt = stmt.having(cls.submenu_alias.id == submenu_id)
+        return stmt
+
+    @classmethod
+    def __get_submenus_query(
+        cls,
+        menu_id: uuid.UUID,
+    ) -> Select[tuple[uuid.UUID, str, str | None, Any]]:
+        """Запрос на получение списка подменю"""
+        dish_alias = aliased(Dish)
 
         dishes_count = (
             select(func.count())
-            .select_from(submenu_alias)
-            .where(submenu_alias.id == dish_alias.submenu_id)
+            .select_from(cls.submenu_alias)
+            .where(cls.submenu_alias.id == dish_alias.submenu_id)
             .as_scalar()
         )
 
         stmt = (
             select(
-                submenu_alias.id,
-                submenu_alias.title,
-                submenu_alias.description,
+                cls.submenu_alias.id,
+                cls.submenu_alias.title,
+                cls.submenu_alias.description,
                 dishes_count.label('dishes_count'),
             )
-            .group_by(submenu_alias.id)
+            .group_by(cls.submenu_alias.id)
             .having(
-                and_(
-                    submenu_alias.menu_id == menu_id,
-                    is_submenu_id,
-                )
+                cls.submenu_alias.menu_id == menu_id,
             )
         )
-
-        result = await session.execute(stmt)
-        await session.commit()
-        submenu_res = result.mappings().all()
-        if len(submenu_res) == 1:
-            return submenu_res[0]
-
-        return submenu_res
+        return stmt

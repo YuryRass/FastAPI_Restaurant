@@ -74,7 +74,7 @@ class SubmenuService:
         res = await RedisSubmenuDAO.get_all(menu_id=menu_id)
         if res is not None:
             return res
-        submenus = await SubmenuDAO.show(menu_id)
+        submenus = await SubmenuDAO.show_all(menu_id)
         background_task.add_task(
             RedisSubmenuDAO.set_all,
             submenus,

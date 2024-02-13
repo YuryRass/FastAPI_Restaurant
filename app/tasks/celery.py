@@ -4,7 +4,6 @@ from celery import Celery
 
 from app.config import settings
 
-# celery --app=app.tasks.celery:celery worker -l INFO
 celery = Celery(
     'tasks',
     broker=settings.RABITMQ_URL,
@@ -12,14 +11,9 @@ celery = Celery(
 )
 
 
-# Добавьте этот блок в конец файла celery_app.py
 celery.conf.beat_schedule = {
     'update_db_every_15_seconds': {
         'task': 'app.tasks.tasks.update_db',
         'schedule': timedelta(seconds=15),
     },
-    # 'write_excel_every_35_seconds': {
-    #     'task': 'app.tasks.tasks.write_excel',
-    #     'schedule': timedelta(seconds=35),
-    # },
 }
