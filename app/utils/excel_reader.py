@@ -1,3 +1,6 @@
+import pickle
+
+from app.database.sync_redis import redis_cacher
 from app.google_api.spreadsheets import SpreadSheets
 from app.utils.json_shemas import JsonDish, JsonMenu, JsonSubmenu
 
@@ -49,17 +52,23 @@ class ExcelReader:
                 discount = None
                 if len(row) == 7:
                     discount = self.__get_discount(row[6])
-                new_price = (
-                    float(row[5].replace(',', '.')) * (1 - discount / 100)
-                    if discount
-                    else float(row[5].replace(',', '.'))
-                )
+                if discount:
+                    new_price = (
+                        float(row[5].replace(',', '.')) * (1 - discount / 100)
+                        if discount
+                        else float(row[5].replace(',', '.'))
+                    )
+                    # Добавляем в кеш новую цену
+                    if redis_cacher.get(row[2]):
+                        redis_cacher.delete(row[2])
+                    redis_cacher.set(row[2], pickle.dumps(new_price))
+
                 self.menus_schema[-1].submenus[-1].dishes.append(
                     JsonDish(
                         id=row[2],
                         title=row[3],
                         description=row[4],
-                        price=round(new_price, 2),
+                        price=round(float(row[5].replace(',', '.')), 2),
                     )
                 )
 

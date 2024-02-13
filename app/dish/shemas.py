@@ -1,4 +1,8 @@
-from pydantic import UUID4, BaseModel, Field, field_validator
+import pickle
+
+from pydantic import UUID4, BaseModel, Field, field_validator, model_validator
+
+from app.database.sync_redis import redis_cacher
 
 
 class SDish(BaseModel):
@@ -28,3 +32,11 @@ class OutSDish(SDish):
         if isinstance(value, float):
             value = str(round(value, 2))
         return value
+
+    @model_validator(mode='after')
+    def validate_atts(self):
+        res = redis_cacher.get(str(self.id))
+        if res:
+            self.price = pickle.loads(res)
+        self.price = str(self.price)
+        return self

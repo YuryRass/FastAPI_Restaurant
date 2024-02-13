@@ -9,12 +9,16 @@ er = ExcelReader()
 loop = asyncio.get_event_loop()
 
 
+async def update():
+    menus_schema = er.get_menus()
+    updater = DBUpdater(menus_schema)
+    await updater.run()
+
+
 @celery.task
 def update_db() -> None:
     """Обновление данных в БД из удаленного excel файла."""
     try:
-        menus_schema = er.get_menus()
-        updater = DBUpdater(menus_schema)
-        return asyncio.run(updater.run())
+        return asyncio.run(update())
     except Exception as exc:
         logging.error(exc)

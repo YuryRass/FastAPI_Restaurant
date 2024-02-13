@@ -159,7 +159,7 @@ async def test_full_list_menus(
         dish['description'] == dish_post['description']
     ), 'The dish description does not match the expected response'
     assert (
-        str(dish['price']) == dish_post['price']
+        dish['price'] == round(float(dish_post['price']), 2)
     ), 'The dish price does not match the expected response'
     assert (
         dish['id'] == saved_data['dish']['id']

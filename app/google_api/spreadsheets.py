@@ -14,7 +14,6 @@ class SpreadSheets:
 
     def get_values(self) -> list[list[str]] | None:
         """Получение данных таблицы из Google Sheets API."""
-        # self.__set_user_permissions() <- используется, если нет прав доступа
         values = self.__spreadsheet_get_values()
         return values
 
