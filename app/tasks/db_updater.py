@@ -1,24 +1,22 @@
 import uuid
 
-from app.menu.dao import MenuDAO
 from app.utils.base_updater import BaseUpdater, DBModel
 from app.utils.json_shemas import JsonDish, JsonMenu, JsonSubmenu
 
 
 class DBUpdater(BaseUpdater):
-    """Обновление данных в БД после чтения excel файла."""
+    """Обновление данных в БД после чтения google sheets."""
 
     def __init__(self, parser_data: list[JsonMenu]):
         super().__init__(parser_data)
 
-    async def run(self) -> None:
+    async def run_update_db(self) -> None:
         """Запуск обновления данных в БД."""
         await self.check_menus()
 
     async def check_menus(self) -> None:
         """Проверка меню в БД и их обновление в соответствии с файлом."""
-        self.db_data = await MenuDAO.show_full_list()
-        menus_id = [item.id for item in self.db_data]
+        menus_id = await super().get_models_id_from_db(DBModel.menu)
         for menu in self.parser_data:
             if menu.id not in menus_id:
                 await super().add_model_data(DBModel.menu, menu)
@@ -37,10 +35,9 @@ class DBUpdater(BaseUpdater):
                 menus_id.remove(menu.id)
                 await super().check_model(DBModel.menu, menu)
                 if menu.submenus:
-                    self.submenus_id = [item.id for item in menu.submenus]
                     await self.__check_submenus(
-                        submenus=menu.submenus,
-                        menu_id=menu.id,
+                        menu.submenus,
+                        menu.id,
                     )
         for id_ in menus_id:
             await super().delete_record_from_model(DBModel.menu, id=id_)
@@ -51,12 +48,14 @@ class DBUpdater(BaseUpdater):
         menu_id: uuid.UUID,
     ) -> None:
         """Проверка подменю в БД и их обновление в соответствии с файлом."""
+        submenus_id_from_db = await super().get_models_id_from_db(DBModel.submenu)
+        current_submenus_id = [submenu.id for submenu in submenus]
         for submenu in submenus:
-            if submenu.id not in self.submenus_id:
+            if submenu.id not in submenus_id_from_db:
                 await super().add_model_data(DBModel.submenu, submenu, menu_id)
                 await super().add_models_batch(DBModel.dish, submenu.dishes, submenu.id)
             else:
-                self.submenus_id.remove(submenu.id)
+                current_submenus_id.remove(submenu.id)
                 await super().check_model(DBModel.submenu, submenu)
                 if submenu.dishes:
                     self.dishes_id = [item.id for item in submenu.dishes]
@@ -64,7 +63,7 @@ class DBUpdater(BaseUpdater):
                         submenu.dishes,
                         submenu.id,
                     )
-        for id_ in self.submenus_id:
+        for id_ in current_submenus_id:
             await super().delete_record_from_model(DBModel.submenu, id=id_)
 
     async def __check_dishes(
@@ -73,11 +72,13 @@ class DBUpdater(BaseUpdater):
         submenu_id: uuid.UUID,
     ) -> None:
         """Проверка блюд в БД и их обновление в соответствии с файлом."""
+        dishes_id_from_db = await super().get_models_id_from_db(DBModel.dish)
+        current_dishes_id = [dish.id for dish in dishes]
         for dish in dishes:
-            if dish.id not in self.dishes_id:
+            if dish.id not in dishes_id_from_db:
                 await super().add_model_data(DBModel.dish, dish, submenu_id)
             else:
-                self.dishes_id.remove(dish.id)
+                current_dishes_id.remove(dish.id)
                 await super().check_model(DBModel.dish, dish)
-        for id_ in self.dishes_id:
+        for id_ in current_dishes_id:
             await super().delete_record_from_model(DBModel.dish, id=id_)

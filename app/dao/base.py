@@ -1,4 +1,5 @@
 """Основной DAO (Data Access Object)."""
+
 import uuid
 from typing import Generic
 
@@ -7,11 +8,12 @@ from sqlalchemy.engine.row import RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dao import ModelType
-from app.database.database import async_session
+from app.database.database import async_engine, async_session
 
 
 class BaseDAO(Generic[ModelType]):
     """Класс, описывающий основные CRUD операции для моделей."""
+
     model: type[ModelType]
 
     @classmethod
@@ -39,9 +41,8 @@ class BaseDAO(Generic[ModelType]):
         """Получение всех ID модели."""
         assert cls.model is not None
         stmt = select(cls.model.id).select_from(cls.model)
-        session: AsyncSession
-        async with async_session() as session:
-            result = await session.execute(stmt)
+        async with async_engine.connect() as conn:
+            result = await conn.execute(stmt)
             return result.scalars().fetchall()
 
     @classmethod
