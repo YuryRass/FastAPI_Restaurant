@@ -18,16 +18,13 @@ if settings.MODE == 'TEST':
     DATABASE_PARAMS = {'poolclass': NullPool}
 else:
     DATABASE_URL = settings.DATABASE_URL
-    DATABASE_PARAMS = {'pool_recycle': 3600, 'pool_size': 10}
+    DATABASE_PARAMS = {}
 
 
 async_engine: AsyncEngine = create_async_engine(DATABASE_URL, **DATABASE_PARAMS)
 
 async_session_: async_sessionmaker = async_sessionmaker(
-    async_engine,
-    expire_on_commit=False,
-    autocommit=False,
-    autoflush=False,
+    async_engine, expire_on_commit=False
 )
 
 

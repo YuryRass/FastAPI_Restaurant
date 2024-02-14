@@ -2,7 +2,6 @@ import uuid
 from enum import Enum
 from typing import Any, Generic, TypeVar
 
-from app.config import settings
 from app.dish.dao import DishDAO
 from app.menu.dao import MenuDAO
 from app.submenu.dao import SubmenuDAO
@@ -23,7 +22,6 @@ class BaseUpdater(Generic[TypeDAO]):
 
     def __init__(self, parser_data: list[JsonMenu]):
         self.parser_data = parser_data
-        self.base_url = str(settings.APP_LINK)
         self.model_dao: dict[str, TypeDAO] = {
             DBModel.dish: self.__get_dao(DBModel.dish),
             DBModel.menu: self.__get_dao(DBModel.menu),

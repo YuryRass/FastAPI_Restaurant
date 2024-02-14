@@ -31,7 +31,6 @@ class BaseDAO(Generic[ModelType]):
         session: AsyncSession
         async with async_session() as session:
             result = await session.execute(stmt)
-            await session.flush()
             await session.commit()
             return result.mappings().one()
 
@@ -58,7 +57,6 @@ class BaseDAO(Generic[ModelType]):
         session: AsyncSession
         async with async_session() as session:
             result = await session.execute(stmt)
-            await session.flush()
             await session.commit()
             return result.mappings().one()
 

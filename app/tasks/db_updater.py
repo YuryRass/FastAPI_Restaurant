@@ -16,6 +16,7 @@ class DBUpdater(BaseUpdater):
         await self.check_menus()
 
     async def check_menus(self) -> None:
+        """Проверка меню в БД и их обновление в соответствии с файлом."""
         self.db_data = await MenuDAO.show_full_list()
         menus_id = [item.id for item in self.db_data]
         for menu in self.parser_data:
