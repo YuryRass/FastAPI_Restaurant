@@ -3,9 +3,8 @@ import uuid
 from app.utils.base_updater import BaseUpdater, DBModel
 from app.utils.json_shemas import JsonDish, JsonMenu, JsonSubmenu
 
-
 class DBUpdater(BaseUpdater):
-    """Обновление данных в БД после чтения google sheets."""
+    """Обновление данных в БД после чтения excel файла."""
 
     def __init__(self, parser_data: list[JsonMenu]):
         super().__init__(parser_data)
