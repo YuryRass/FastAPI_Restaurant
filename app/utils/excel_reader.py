@@ -48,7 +48,6 @@ class ExcelReader:
                 )
             # Блюда
             else:  # row[2] != ''
-                # получаем скидку на блюдо
                 discount = None
                 if len(row) == 7:
                     discount = self.__get_discount(row[6])

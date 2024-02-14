@@ -7,14 +7,14 @@ from app.exceptions import MenuNotFoundException, SimilarMenuTitlesException
 from app.menu.cache_dao import RedisMenuDAO
 from app.menu.dao import MenuDAO
 from app.menu.shemas import OutSMenu, SMenu
-from app.utils.json_shemas import JsonMenu
+from app.utils.json_shemas import JsonMenuOut
 
 
 class MenuService:
     """Сервисный слой для меню."""
 
     @classmethod
-    async def show_full_list(cls, background_task: BackgroundTasks) -> list[JsonMenu]:
+    async def show_full_list(cls, background_task: BackgroundTasks) -> list[JsonMenuOut]:
         """
         Отображение всех меню со всеми связанными подменю
         и со всеми связанными блюдами.

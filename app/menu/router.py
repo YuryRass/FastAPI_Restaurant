@@ -5,7 +5,7 @@ from fastapi import APIRouter, BackgroundTasks, Response
 from app.menu.model import Menu
 from app.menu.service import MenuService
 from app.menu.shemas import OutSMenu, SMenu
-from app.utils.json_shemas import JsonMenu
+from app.utils.json_shemas import JsonMenuOut
 
 router: APIRouter = APIRouter(tags=['Menus'])
 
@@ -179,7 +179,7 @@ async def show_menus(background_task: BackgroundTasks) -> list[OutSMenu]:
 
 @router.get(
     Menu.FULL_LINK,
-    response_model=list[JsonMenu],
+    response_model=list[JsonMenuOut],
     responses={
         200: {
             'description': 'Список всех меню успешно получен.',
@@ -249,7 +249,7 @@ async def show_menus(background_task: BackgroundTasks) -> list[OutSMenu]:
         },
     },
 )
-async def show_full_list_menus(background_task: BackgroundTasks) -> list[JsonMenu]:
+async def show_full_list_menus(background_task: BackgroundTasks) -> list[JsonMenuOut]:
     """
     **Получение всех меню со всеми связанными подменю и со всеми связанными блюдами.**
 

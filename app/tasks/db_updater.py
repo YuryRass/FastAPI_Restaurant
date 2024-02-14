@@ -3,6 +3,7 @@ import uuid
 from app.utils.base_updater import BaseUpdater, DBModel
 from app.utils.json_shemas import JsonDish, JsonMenu, JsonSubmenu
 
+
 class DBUpdater(BaseUpdater):
     """Обновление данных в БД после чтения excel файла."""
 
