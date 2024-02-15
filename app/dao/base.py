@@ -37,10 +37,10 @@ class BaseDAO(Generic[ModelType]):
             return result.mappings().one()
 
     @classmethod
-    async def get_identifiers(cls) -> list[uuid.UUID]:
+    async def get_identifiers(cls, **kwargs) -> list[uuid.UUID]:
         """Получение всех ID модели."""
         assert cls.model is not None
-        stmt = select(cls.model.id).select_from(cls.model)
+        stmt = select(cls.model.id).select_from(cls.model).filter_by(**kwargs)
         async with async_engine.connect() as conn:
             result = await conn.execute(stmt)
             return result.scalars().fetchall()

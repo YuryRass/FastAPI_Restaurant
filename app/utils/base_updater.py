@@ -36,9 +36,9 @@ class BaseUpdater(Generic[TypeDAO]):
         else:
             return MenuDAO
 
-    async def get_models_id_from_db(self, model: str) -> list[uuid.UUID]:
+    async def get_models_id_from_db(self, model: str, **kwargs) -> list[uuid.UUID]:
         """Получить список всех существующих идентификаторов модели из БД."""
-        model_identifiers = await self.model_dao[model].get_identifiers()
+        model_identifiers = await self.model_dao[model].get_identifiers(**kwargs)
         return model_identifiers
 
     async def add_model_data(
