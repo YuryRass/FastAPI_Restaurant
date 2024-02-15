@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/sh -ex
 
 if $CELERY_RUN ; then
-    rm -rf /code/badpanty/*.pid
-    celery -A app.tasks.celery:celery beat --loglevel=info & \
-    celery -A app.tasks.celery:celery worker --loglevel=info -B
+    celery -A app.tasks.celery:celery beat --loglevel=debug &
+    celery -A app.tasks.celery:celery worker --loglevel=info &
+    tail -f /dev/null
 fi
