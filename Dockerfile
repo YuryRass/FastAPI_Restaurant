@@ -13,4 +13,3 @@ COPY . .
 
 RUN chmod a+x docker/*.sh
 
-# CMD ["docker/run.sh"]
