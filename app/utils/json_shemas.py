@@ -3,7 +3,7 @@ from typing import TypeVar
 
 from pydantic import UUID4, BaseModel, model_validator
 
-from app.database.sync_redis import redis_cacher
+from app.database.redis import sync_redis_cacher
 
 
 class JsonDish(BaseModel):
@@ -20,7 +20,7 @@ class UpdatedJsonDish(JsonDish):
 
     @model_validator(mode='after')
     def validate_atts(self):
-        res = redis_cacher.get(str(self.id))
+        res = sync_redis_cacher.get(str(self.id))
         if res:
             self.price = float(pickle.loads(res))
         self.price = round(self.price, 2)

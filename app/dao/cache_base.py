@@ -5,7 +5,7 @@ from aioredis import Redis
 
 from app.config import settings
 from app.dao import ModelType
-from app.database.async_redis import redis_cacher
+from app.database.redis import redis_cacher
 
 
 class RedisBaseDAO(Generic[ModelType]):
